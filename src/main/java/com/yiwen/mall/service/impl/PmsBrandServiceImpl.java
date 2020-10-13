@@ -2,8 +2,8 @@ package com.yiwen.mall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.yiwen.mall.mbg.mapper.PmsBrandMapper;
-import com.yiwen.mall.mbg.model.PmsBrand;
+import com.yiwen.mall.dao.model.PmsBrand;
+import com.yiwen.mall.dao.mapper.PmsBrandMapper;
 import com.yiwen.mall.service.PmsBrandService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,11 +23,12 @@ public class PmsBrandServiceImpl implements PmsBrandService {
 
     @Override
     public List<PmsBrand> listAllBrand() {
-        return brandMapper.listAll();
+        return null;
+//        return brandMapper();
     }
 
     @Override
-    public int createBrand(PmsBrand brand) {
+    public int addBrand(PmsBrand brand) {
         return brandMapper.insert(brand);
     }
 
@@ -53,7 +54,7 @@ public class PmsBrandServiceImpl implements PmsBrandService {
     }
 
     @Override
-    public PmsBrand getBrand(Long id) {
+    public PmsBrand getBrandById(Long id) {
         return brandMapper.selectByPrimaryKey(id);
     }
 }

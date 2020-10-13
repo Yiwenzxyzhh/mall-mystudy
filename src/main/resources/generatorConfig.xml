@@ -13,11 +13,13 @@
         <plugin type="org.mybatis.generator.plugins.SerializablePlugin"/>
         <!-- 为生成的Java模型创建一个toString方法 -->
         <plugin type="org.mybatis.generator.plugins.ToStringPlugin"/>
+        <!--生成mapper.xml时覆盖原文件-->
+        <plugin type="org.mybatis.generator.plugins.UnmergeableXmlMappersPlugin" />
         <!--可以自定义生成model的代码注释-->
-        <commentGenerator>
-<!--        <commentGenerator type="com.yiwen.mall.mbg.CommentGenerator">-->
+<!--        <commentGenerator>-->
+        <commentGenerator type="com.yiwen.mall.dao.CommentGenerator">
             <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
-            <property name="suppressAllComments" value="false"/>
+            <property name="suppressAllComments" value="true"/>
             <property name="suppressDate" value="true"/>
             <property name="addRemarkComments" value="true"/>
         </commentGenerator>
@@ -36,11 +38,11 @@
             <property name="useInformationSchema" value="true" />
         </jdbcConnection>
         <!--指定生成model的路径-->
-        <javaModelGenerator targetPackage="com.yiwen.mall.mbg.model" targetProject="src\main\java"/>
+        <javaModelGenerator targetPackage="com.yiwen.mall.dao.model" targetProject="src\main\java"/>
         <!--指定生成mapper.xml的路径-->
-        <sqlMapGenerator targetPackage="com.yiwen.mall.mbg.mapper" targetProject="src\main\resources"/>
+        <sqlMapGenerator targetPackage="com.yiwen.mall.dao.mapper" targetProject="src\main\java"/>
         <!--指定生成mapper接口的的路径-->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.yiwen.mall.mbg.mapper"
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.yiwen.mall.dao.mapper"
                              targetProject="src\main\java"/>
         <!--生成全部表tableName设为%，不自动生成Example 类和其对应的 CURD方法。-->
         <table tableName="pms_brand" enableCountByExample="false"
