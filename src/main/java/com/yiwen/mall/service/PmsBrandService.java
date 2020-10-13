@@ -1,6 +1,6 @@
 package com.yiwen.mall.service;
 
-import com.yiwen.mall.mbg.model.PmsBrand;
+import com.yiwen.mall.dao.model.PmsBrand;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public interface PmsBrandService {
 
     List<PmsBrand> listAllBrand();
 
-    int createBrand(PmsBrand brand);
+    int addBrand(PmsBrand brand);
 
     int updateBrand(Long id, PmsBrand brand);
 
@@ -21,5 +21,5 @@ public interface PmsBrandService {
 
     List<PmsBrand> listBrand(int pageNum, int pageSize);
 
-    PmsBrand getBrand(Long id);
+    PmsBrand getBrandById(Long id);
 }

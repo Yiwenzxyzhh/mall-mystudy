@@ -1,4 +1,4 @@
-package com.yiwen.mall.mbg;
+package com.yiwen.mall.dao;
 
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.Configuration;
