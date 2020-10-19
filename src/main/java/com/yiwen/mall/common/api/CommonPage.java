@@ -21,6 +21,7 @@ public class CommonPage<T> {
      */
     public static <T> CommonPage<T> restPage(List<T> list) {
         CommonPage<T> result = new CommonPage<T>();
+        //通过构造PageInfo对象获取分页信息，如当前页码，总页数，总条数
         PageInfo<T> pageInfo = new PageInfo<T>(list);
         result.setTotalPage(pageInfo.getPages());
         result.setPageNum(pageInfo.getPageNum());

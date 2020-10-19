@@ -7,7 +7,7 @@ import java.util.Date;
 public class PmsBrand implements Serializable {
     private Long id;
 
-    private String name;
+    private String productName;
 
     @ApiModelProperty(value = "首字母")
     private String firstLetter;
@@ -51,12 +51,12 @@ public class PmsBrand implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public String getFirstLetter() {
@@ -162,7 +162,7 @@ public class PmsBrand implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", name=").append(name);
+        sb.append(", productName=").append(productName);
         sb.append(", firstLetter=").append(firstLetter);
         sb.append(", sort=").append(sort);
         sb.append(", factoryStatus=").append(factoryStatus);

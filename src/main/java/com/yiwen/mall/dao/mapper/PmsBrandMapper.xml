@@ -3,7 +3,7 @@
 <mapper namespace="com.yiwen.mall.dao.mapper.PmsBrandMapper">
   <resultMap id="BaseResultMap" type="com.yiwen.mall.dao.model.PmsBrand">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
     <result column="first_letter" jdbcType="VARCHAR" property="firstLetter" />
     <result column="sort" jdbcType="INTEGER" property="sort" />
     <result column="factory_status" jdbcType="INTEGER" property="factoryStatus" />
@@ -20,14 +20,14 @@
     <result column="brand_story" jdbcType="LONGVARCHAR" property="brandStory" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, name, first_letter, sort, factory_status, show_status, product_count, product_comment_count, 
-    logo, big_pic, deleted_flag, create_time, update_time
+    id, product_name, first_letter, sort, factory_status, show_status, product_count,
+    product_comment_count, logo, big_pic, deleted_flag, create_time, update_time
   </sql>
   <sql id="Blob_Column_List">
     brand_story
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
-    select 
+    select
     <include refid="Base_Column_List" />
     ,
     <include refid="Blob_Column_List" />
@@ -42,15 +42,15 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into pms_brand (name, first_letter, sort, 
-      factory_status, show_status, product_count, 
-      product_comment_count, logo, big_pic, 
-      deleted_flag, create_time, update_time, 
+    insert into pms_brand (product_name, first_letter, sort,
+      factory_status, show_status, product_count,
+      product_comment_count, logo, big_pic,
+      deleted_flag, create_time, update_time,
       brand_story)
-    values (#{name,jdbcType=VARCHAR}, #{firstLetter,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, 
-      #{factoryStatus,jdbcType=INTEGER}, #{showStatus,jdbcType=INTEGER}, #{productCount,jdbcType=INTEGER}, 
-      #{productCommentCount,jdbcType=INTEGER}, #{logo,jdbcType=VARCHAR}, #{bigPic,jdbcType=VARCHAR}, 
-      #{deletedFlag,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+    values (#{productName,jdbcType=VARCHAR}, #{firstLetter,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER},
+      #{factoryStatus,jdbcType=INTEGER}, #{showStatus,jdbcType=INTEGER}, #{productCount,jdbcType=INTEGER},
+      #{productCommentCount,jdbcType=INTEGER}, #{logo,jdbcType=VARCHAR}, #{bigPic,jdbcType=VARCHAR},
+      #{deletedFlag,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP},
       #{brandStory,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.yiwen.mall.dao.model.PmsBrand">
@@ -59,8 +59,8 @@
     </selectKey>
     insert into pms_brand
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        name,
+      <if test="productName != null">
+        product_name,
       </if>
       <if test="firstLetter != null">
         first_letter,
@@ -100,8 +100,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
+      <if test="productName != null">
+        #{productName,jdbcType=VARCHAR},
       </if>
       <if test="firstLetter != null">
         #{firstLetter,jdbcType=VARCHAR},
@@ -144,8 +144,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.yiwen.mall.dao.model.PmsBrand">
     update pms_brand
     <set>
-      <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+      <if test="productName != null">
+        product_name = #{productName,jdbcType=VARCHAR},
       </if>
       <if test="firstLetter != null">
         first_letter = #{firstLetter,jdbcType=VARCHAR},
@@ -188,7 +188,7 @@
   </update>
   <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yiwen.mall.dao.model.PmsBrand">
     update pms_brand
-    set name = #{name,jdbcType=VARCHAR},
+    set product_name = #{productName,jdbcType=VARCHAR},
       first_letter = #{firstLetter,jdbcType=VARCHAR},
       sort = #{sort,jdbcType=INTEGER},
       factory_status = #{factoryStatus,jdbcType=INTEGER},
@@ -205,7 +205,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.yiwen.mall.dao.model.PmsBrand">
     update pms_brand
-    set name = #{name,jdbcType=VARCHAR},
+    set product_name = #{productName,jdbcType=VARCHAR},
       first_letter = #{firstLetter,jdbcType=VARCHAR},
       sort = #{sort,jdbcType=INTEGER},
       factory_status = #{factoryStatus,jdbcType=INTEGER},
@@ -219,4 +219,10 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <select id="listAll" resultMap="BaseResultMap">
+  select <include refid="Base_Column_List"/>
+  from pms_brand
+  order by create_time desc
+  </select>
 </mapper>

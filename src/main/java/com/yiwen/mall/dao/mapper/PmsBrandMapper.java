@@ -3,6 +3,8 @@ package com.yiwen.mall.dao.mapper;
 import com.yiwen.mall.dao.model.PmsBrand;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface PmsBrandMapper {
     int deleteByPrimaryKey(Long id);
@@ -18,4 +20,6 @@ public interface PmsBrandMapper {
     int updateByPrimaryKeyWithBLOBs(PmsBrand record);
 
     int updateByPrimaryKey(PmsBrand record);
+
+    List<PmsBrand> listAll();
 }
