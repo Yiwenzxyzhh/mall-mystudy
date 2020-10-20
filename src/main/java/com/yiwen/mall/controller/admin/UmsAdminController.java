@@ -35,7 +35,6 @@ public class UmsAdminController {
 
     @ApiOperation(value = "用户注册")
     @PostMapping(value = "/register")
-    @ResponseBody
     public CommonResult<UmsAdmin> register(@RequestBody UmsAdmin umsAdminParam, BindingResult result) {
         UmsAdmin umsAdmin = adminService.register(umsAdminParam);
         if (umsAdmin == null) {
@@ -46,7 +45,6 @@ public class UmsAdminController {
 
     @ApiOperation(value = "登录以后返回token")
     @PostMapping(value = "/login")
-    @ResponseBody
     public CommonResult login(@RequestBody UmsAdminLoginParam umsAdminLoginParam, BindingResult result) {
         String token = adminService.login(umsAdminLoginParam.getUsername(), umsAdminLoginParam.getPassword());
         if (token == null) {
@@ -60,7 +58,6 @@ public class UmsAdminController {
 
     @ApiOperation("获取用户所有权限（包括+-权限）")
     @GetMapping(value = "/permission/{adminId}")
-    @ResponseBody
     public CommonResult<List<UmsPermission>> getPermissionList(@PathVariable Long adminId) {
         List<UmsPermission> permissionList = adminService.getPermissionList(adminId);
         return CommonResult.success(permissionList);
