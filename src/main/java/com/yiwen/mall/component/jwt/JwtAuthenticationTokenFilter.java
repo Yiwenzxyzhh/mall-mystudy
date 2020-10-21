@@ -1,4 +1,4 @@
-package com.yiwen.mall.component;
+package com.yiwen.mall.component.jwt;
 
 import com.yiwen.mall.common.utils.JwtTokenUtil;
 import org.slf4j.Logger;

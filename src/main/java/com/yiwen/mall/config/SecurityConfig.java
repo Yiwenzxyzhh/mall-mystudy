@@ -1,6 +1,6 @@
 package com.yiwen.mall.config;
 
-import com.yiwen.mall.component.JwtAuthenticationTokenFilter;
+import com.yiwen.mall.component.jwt.JwtAuthenticationTokenFilter;
 import com.yiwen.mall.component.RestAuthenticationEntryPoint;
 import com.yiwen.mall.component.RestfulAccessDeniedHandler;
 import com.yiwen.mall.dao.model.UmsAdmin;
@@ -69,8 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers(HttpMethod.OPTIONS)//跨域请求会先进行一次options请求
                 .permitAll()
-//                .antMatchers("/**")//测试时全部运行访问
-//                .permitAll()
+                .antMatchers("/**")//测试时全部运行访问
+                .permitAll()
                 .anyRequest()// 除上面外的所有请求全部需要鉴权认证
                 .authenticated();
         // 禁用缓存
