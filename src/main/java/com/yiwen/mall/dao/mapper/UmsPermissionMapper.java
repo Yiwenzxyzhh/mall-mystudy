@@ -1,7 +1,11 @@
 package com.yiwen.mall.dao.mapper;
 
 import com.yiwen.mall.dao.model.UmsPermission;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+@Repository
 public interface UmsPermissionMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -14,4 +18,6 @@ public interface UmsPermissionMapper {
     int updateByPrimaryKeySelective(UmsPermission record);
 
     int updateByPrimaryKey(UmsPermission record);
+
+    List<UmsPermission> selectAll();
 }

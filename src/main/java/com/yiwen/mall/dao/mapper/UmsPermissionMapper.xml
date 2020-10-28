@@ -17,7 +17,7 @@
     id, pid, name, value, icon, type, uri, status, create_time, sort
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from ums_permission
     where id = #{id,jdbcType=BIGINT}
@@ -30,11 +30,11 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into ums_permission (pid, name, value, 
-      icon, type, uri, status, 
+    insert into ums_permission (pid, name, value,
+      icon, type, uri, status,
       create_time, sort)
-    values (#{pid,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, 
-      #{icon,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{uri,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+    values (#{pid,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR},
+      #{icon,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, #{uri,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
       #{createTime,jdbcType=TIMESTAMP}, #{sort,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.yiwen.mall.dao.model.UmsPermission">
@@ -147,4 +147,9 @@
       sort = #{sort,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ums_permission
+  </select>
 </mapper>
