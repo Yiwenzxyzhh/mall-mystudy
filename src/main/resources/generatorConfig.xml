@@ -45,7 +45,7 @@
         <javaClientGenerator type="XMLMAPPER" targetPackage="com.yiwen.mall.dao.mapper"
                              targetProject="src\main\java"/>
         <!--生成全部表tableName设为%，不自动生成Example 类和其对应的 CURD方法。-->
-        <table tableName="pms_product_category" enableCountByExample="false"
+        <table tableName="ums_member" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>

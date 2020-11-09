@@ -1,6 +1,7 @@
 package com.yiwen.mall.service;
 
 import com.yiwen.mall.common.api.CommonResult;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * @author ywxie
@@ -18,4 +19,8 @@ public interface UmsMemberService {
      * 判断验证码和手机号码是否匹配
      */
     CommonResult verifyAuthCode(String telephone, String authCode);
+
+    String refreshToken(String token);
+    UserDetails loadUserByUsername(String username);
+    String login(String username, String password);
 }

@@ -1,4 +1,4 @@
-package com.yiwen.mall.component;
+package com.yiwen.mall.component.security;
 
 import cn.hutool.json.JSONUtil;
 import com.yiwen.mall.common.api.CommonResult;
