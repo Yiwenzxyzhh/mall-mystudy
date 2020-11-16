@@ -34,13 +34,19 @@ import java.util.List;
  * @describe SpringSecurity的配置
  * 对SpringSecurity的配置的扩展，支持自定义白名单资源路径和查询用户逻辑
  */
-@Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+//@Configuration
+//@EnableWebSecurity
+//@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UmsAdminService adminService;
+//    @Autowired
+//    private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private RestAuthenticationEntryPoint authenticationEntryPoint;
+    @Autowired
+    private RestfulAccessDeniedHandler accessDeniedHandler;
 
     /**
      * 用于配置需要拦截的url路径、jwt过滤器及出异常后的处理器；
@@ -72,9 +78,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //添加自定义未授权和未登录结果返回
                 .exceptionHandling()
                 //RestfulAccessDeniedHandler：当用户没有访问权限时的处理器，用于返回JSON格式的处理结果；
-                .accessDeniedHandler(restfulAccessDeniedHandler())
+                .accessDeniedHandler(accessDeniedHandler)
                 //RestAuthenticationEntryPoint：当未登录或token失效时，返回JSON格式的结果；
-                .authenticationEntryPoint(restAuthenticationEntryPoint())
+                .authenticationEntryPoint(authenticationEntryPoint)
                 // 自定义权限拦截器JWT过滤器
                 .and()
                 .addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -133,24 +139,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-    @Bean
-    public RestfulAccessDeniedHandler restfulAccessDeniedHandler() {
-        return new RestfulAccessDeniedHandler();
-    }
-
-    @Bean
-    public RestAuthenticationEntryPoint restAuthenticationEntryPoint() {
-        return new RestAuthenticationEntryPoint();
-    }
+//    @Bean
+//    public RestfulAccessDeniedHandler restfulAccessDeniedHandler() {
+//        return new RestfulAccessDeniedHandler();
+//    }
+//
+//    @Bean
+//    public RestAuthenticationEntryPoint restAuthenticationEntryPoint() {
+//        return new RestAuthenticationEntryPoint();
+//    }
 
     @Bean
     public IgnoreUrlsConfig ignoreUrlsConfig(){
         return new IgnoreUrlsConfig();
     }
 
-    @Bean
-    public JwtTokenUtil jwtTokenUtil(){
-        return new JwtTokenUtil();
-    }
+//    @Bean
+//    public JwtTokenUtil jwtTokenUtil(){
+//        return new JwtTokenUtil();
+//    }
 
 }

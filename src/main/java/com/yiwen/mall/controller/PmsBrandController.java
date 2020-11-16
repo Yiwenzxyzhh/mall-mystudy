@@ -1,5 +1,6 @@
 package com.yiwen.mall.controller;
 
+import com.google.common.collect.ImmutableMap;
 import com.yiwen.mall.common.api.CommonPage;
 import com.yiwen.mall.common.api.CommonResult;
 import com.yiwen.mall.dao.model.PmsBrand;
@@ -33,81 +34,47 @@ public class PmsBrandController {
     @PreAuthorize("hasAuthority('pms:brand:read')")
     @ApiOperation("获取所有品牌列表")
     @GetMapping(value = "listAll")
-    public CommonResult<List<PmsBrand>> getBrandList() {
-        return CommonResult.success(brandService.listAllBrand());
+    public CommonResult getBrandList() {
+        return CommonResult.success(ImmutableMap.of("brand_list", brandService.listAllBrand()));
     }
 
     @PreAuthorize("hasAuthority('pms:brand:create')")
     @ApiOperation("添加品牌")
     @PostMapping(value = "")
     public CommonResult addBrand(@RequestBody PmsBrand pmsBrand){
-        CommonResult commonResult;
-        int count = brandService.addBrand(pmsBrand);
-        if (count == 1){
-            commonResult = CommonResult.success(pmsBrand);
-            LOGGER.debug("addBrand success:{}", pmsBrand);
-        }else {
-            commonResult = CommonResult.failed("操作失败");
-            LOGGER.debug("addBrand failed:{}", pmsBrand);
-        }
-        return commonResult;
+        brandService.addBrand(pmsBrand);
+        return CommonResult.success();
     }
 
     @PreAuthorize("hasAuthority('pms:brand:update')")
     @ApiOperation("更新指定id品牌信息")
     @PutMapping("/{id}")
     public CommonResult updateBrand(@PathVariable("id") Long id, @RequestBody PmsBrand pmsBrandDTO, BindingResult bindingResult){
-        CommonResult commonResult;
-        int count = brandService.updateBrand(id, pmsBrandDTO);
-        if (count == 1){
-            commonResult = CommonResult.success(pmsBrandDTO);
-            LOGGER.debug("updateBrand success:{}", pmsBrandDTO);
-        }else {
-            commonResult = CommonResult.failed("操作失败");
-            LOGGER.debug("updateBrand failed:{}", pmsBrandDTO);
-        }
-        return commonResult;
+        brandService.updateBrand(id, pmsBrandDTO);
+        return CommonResult.success();
     }
 
     @PreAuthorize("hasAuthority('pms:brand:delete')")
     @ApiOperation("删除指定id的品牌")
     @DeleteMapping("/{id}")
     public CommonResult deleteBrand(@PathVariable("id") Long id){
-        int count = brandService.deleteBrand(id);
-        if (count == 1) {
-            LOGGER.debug("deleteBrand success :id={}", id);
-            return CommonResult.success(null);
-        } else {
-            LOGGER.debug("deleteBrand failed :id={}", id);
-            return CommonResult.failed("操作失败");
-        }
+        brandService.deleteBrand(id);
+        return CommonResult.success();
     }
 
     @PreAuthorize("hasAuthority('pms:brand:read')")
     @ApiOperation("分页查询品牌列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
-    public CommonResult<CommonPage<PmsBrand>> listBrand(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+    public CommonResult listBrand(@RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                                         @RequestParam(value = "pageSize", defaultValue = "3") Integer pageSize) {
         List<PmsBrand> brandList = brandService.listBrand(pageNum, pageSize);
-        return CommonResult.success(CommonPage.restPage(brandList));
+        return CommonResult.success(ImmutableMap.of("brand_list",CommonPage.restPage(brandList)));
     }
 
     @PreAuthorize("hasAuthority('pms:brand:read')")
     @ApiOperation("获取指定id品牌详情")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public CommonResult<PmsBrand> brand(@PathVariable("id") Long id) {
-        return CommonResult.success(brandService.getBrandById(id));
-    }
-
-    private CommonResult getCommonResult(int count, Object object, String logStr){
-        CommonResult commonResult;
-        if (count == 1){
-            commonResult = CommonResult.success(object);
-            LOGGER.debug(logStr + " success:{}", object);
-        }else {
-            commonResult = CommonResult.failed("操作失败");
-            LOGGER.debug(logStr + " failed:{}", object);
-        }
-        return commonResult;
+    public CommonResult brand(@PathVariable("id") Long id) {
+        return CommonResult.success(ImmutableMap.of("brand_detail",brandService.getBrandById(id)));
     }
 }

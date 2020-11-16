@@ -1,8 +1,9 @@
 package com.yiwen.mall.service.impl;
 
+import com.yiwen.mall.common.exception.Asserts;
+import com.yiwen.mall.common.api.ResultCodeEnum;
 import com.yiwen.mall.common.exception.BusinessException;
 import com.yiwen.mall.common.utils.JwtTokenUtil;
-import com.yiwen.mall.controller.dto.ResultEnum;
 import com.yiwen.mall.dao.custom.UmsAdminRoleRelationDao;
 import com.yiwen.mall.dao.mapper.UmsAdminMapper;
 import com.yiwen.mall.dao.model.UmsAdmin;
@@ -54,9 +55,6 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         UmsAdminQueryBO umsAdminQueryBO = new UmsAdminQueryBO();
         umsAdminQueryBO.setUserName(userName);
         List<UmsAdmin> adminList = adminMapper.listByQueryBO(umsAdminQueryBO);
-//        UmsAdminExample example = new UmsAdminExample();
-//        example.createCriteria().andUsernameEqualTo(username);
-//        List<UmsAdmin> adminList = adminMapper.selectByExample(example);
         if (adminList != null && adminList.size() > 0) {
             return adminList.get(0);
         }
@@ -78,7 +76,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 //        List<UmsAdmin> umsAdminList = adminMapper.selectByExample(example);
         if (umsAdminList.size() > 0) {
             //错误提示：已存在相同用户名
-            throw new BusinessException(ResultEnum.UMS_USER_NAME_DUPLICATED);
+            throw new BusinessException(ResultCodeEnum.USER_NAME_DUPLICATED);
         }
         //将密码进行加密操作
         String encodePassword = passwordEncoder.encode(umsAdmin.getPassword());
@@ -92,6 +90,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         String token = null;
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (userDetails == null){
+                Asserts.fail(ResultCodeEnum.USERNAME_OR_PASSWORD_INCORRECT);
+            }
             if (!passwordEncoder.matches(password, userDetails.getPassword())) {
                 throw new BadCredentialsException("密码不正确");
             }

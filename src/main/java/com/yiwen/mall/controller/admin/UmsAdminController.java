@@ -1,6 +1,8 @@
 package com.yiwen.mall.controller.admin;
 
+import com.yiwen.mall.common.exception.Asserts;
 import com.yiwen.mall.common.api.CommonResult;
+import com.yiwen.mall.common.api.ResultCodeEnum;
 import com.yiwen.mall.dao.model.UmsAdmin;
 import com.yiwen.mall.dao.model.UmsPermission;
 import com.yiwen.mall.dto.UmsAdminLoginParam;
@@ -35,7 +37,7 @@ public class UmsAdminController {
 
     @ApiOperation(value = "用户注册")
     @PostMapping(value = "/register")
-    public CommonResult<UmsAdmin> register(@RequestBody UmsAdmin umsAdminParam, BindingResult result) {
+    public CommonResult<UmsAdmin> register(@RequestBody UmsAdmin umsAdminParam) {
         UmsAdmin umsAdmin = adminService.register(umsAdminParam);
         if (umsAdmin == null) {
             CommonResult.failed();
@@ -48,7 +50,7 @@ public class UmsAdminController {
     public CommonResult login(@RequestBody UmsAdminLoginParam umsAdminLoginParam, BindingResult result) {
         String token = adminService.login(umsAdminLoginParam.getUsername(), umsAdminLoginParam.getPassword());
         if (token == null) {
-            return CommonResult.validateFailed("用户名或密码错误");
+            Asserts.fail(ResultCodeEnum.USERNAME_OR_PASSWORD_INCORRECT);
         }
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put("token", token);

@@ -1,30 +1,30 @@
 package com.yiwen.mall.common.exception;
 
-import com.yiwen.mall.controller.dto.ResultEnum;
+import com.yiwen.mall.common.api.ResultCodeEnum;
 
 public class BusinessException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    private ResultEnum resultEnum;
+    private ResultCodeEnum resultEnum;
 
     private Object data;
 
-    public BusinessException(ResultEnum resultEnum) {
+    public BusinessException(ResultCodeEnum resultEnum) {
         this(resultEnum, null);
     }
 
-    public BusinessException(ResultEnum resultEnum, Object data) {
-        super(resultEnum.getMsg());
+    public BusinessException(ResultCodeEnum resultEnum, Object data) {
+        super(resultEnum.getMessage());
         this.resultEnum = resultEnum;
         this.data = data;
     }
 
-    public int getErrorCode() {
-        return resultEnum.getState();
+    public long getErrorCode() {
+        return resultEnum.getCode();
     }
 
-    public ResultEnum getResultEnum() {
+    public ResultCodeEnum getResultEnum() {
         return resultEnum;
     }
 

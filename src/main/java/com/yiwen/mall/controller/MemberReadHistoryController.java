@@ -1,5 +1,6 @@
 package com.yiwen.mall.controller;
 
+import com.google.common.collect.ImmutableMap;
 import com.yiwen.mall.common.api.CommonResult;
 import com.yiwen.mall.nosql.mongobd.document.MemberReadHistory;
 import com.yiwen.mall.service.MemberReadHistoryService;
@@ -38,19 +39,14 @@ public class MemberReadHistoryController {
     @PostMapping(value = "/delete")
     public CommonResult delete(@RequestParam("ids") List<String> ids) {
         int count = memberReadHistoryService.delete(ids);
-        if (count > 0) {
-            return CommonResult.success(count);
-        } else {
-            return CommonResult.failed();
-        }
+        return CommonResult.success(count);
     }
 
     @ApiOperation("展示浏览记录")
     @GetMapping(value = "/list")
     @ResponseBody
-    public CommonResult<List<MemberReadHistory>> list(Long memberId) {
-        List<MemberReadHistory> memberReadHistoryList = memberReadHistoryService.list(memberId);
-        return CommonResult.success(memberReadHistoryList);
+    public CommonResult list(Long memberId) {
+        return CommonResult.success(ImmutableMap.of("member_read_history_list", memberReadHistoryService.list(memberId)));
     }
 
 }

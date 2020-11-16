@@ -1,10 +1,13 @@
 package com.yiwen.mall.service.impl;
 
 import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
+import com.yiwen.mall.common.exception.Asserts;
+import com.yiwen.mall.common.api.ResultCodeEnum;
 import com.yiwen.mall.dao.model.PmsBrand;
 import com.yiwen.mall.dao.mapper.PmsBrandMapper;
 import com.yiwen.mall.service.PmsBrandService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,29 +21,48 @@ import java.util.List;
 @Service
 public class PmsBrandServiceImpl implements PmsBrandService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PmsBrandServiceImpl.class);
+
     @Autowired
     private PmsBrandMapper brandMapper;
 
     @Override
     public List<PmsBrand> listAllBrand() {
-//        return null;
         return brandMapper.listAll();
     }
 
     @Override
-    public int addBrand(PmsBrand brand) {
-        return brandMapper.insert(brand);
+    public void addBrand(PmsBrand brand) {
+        int count = brandMapper.insert(brand);
+        if (count == 1){
+            LOGGER.debug("addBrand success:{}", brand);
+        }else {
+            LOGGER.debug("addBrand failed:{}", brand);
+            Asserts.fail(ResultCodeEnum.FAILED);
+        }
     }
 
     @Override
-    public int updateBrand(Long id, PmsBrand brand) {
+    public void updateBrand(Long id, PmsBrand brand) {
         brand.setId(id);
-        return brandMapper.updateByPrimaryKey(brand);
+        int count = brandMapper.updateByPrimaryKey(brand);
+        if (count == 1){
+            LOGGER.debug("updateBrand success:{}", brand);
+        }else {
+            LOGGER.debug("updateBrand failed:{}", brand);
+            Asserts.fail(ResultCodeEnum.FAILED);
+        }
     }
 
     @Override
-    public int deleteBrand(Long id) {
-        return brandMapper.deleteByPrimaryKey(id);
+    public void deleteBrand(Long id) {
+        int count = brandMapper.deleteByPrimaryKey(id);
+        if (count == 1) {
+            LOGGER.debug("deleteBrand success :id={}", id);
+        } else {
+            LOGGER.debug("deleteBrand failed :id={}", id);
+            Asserts.fail(ResultCodeEnum.FAILED);
+        }
     }
 
     @Override

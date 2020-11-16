@@ -13,11 +13,11 @@ public interface PmsBrandService {
 
     List<PmsBrand> listAllBrand();
 
-    int addBrand(PmsBrand brand);
+    void addBrand(PmsBrand brand);
 
-    int updateBrand(Long id, PmsBrand brand);
+    void updateBrand(Long id, PmsBrand brand);
 
-    int deleteBrand(Long id);
+    void deleteBrand(Long id);
 
     List<PmsBrand> listBrand(int pageNum, int pageSize);
 

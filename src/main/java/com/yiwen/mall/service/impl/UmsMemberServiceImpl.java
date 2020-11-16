@@ -1,6 +1,7 @@
 package com.yiwen.mall.service.impl;
 
-import com.yiwen.mall.common.api.CommonResult;
+import com.yiwen.mall.common.exception.Asserts;
+import com.yiwen.mall.common.api.ResultCodeEnum;
 import com.yiwen.mall.common.utils.JwtTokenUtil;
 import com.yiwen.mall.dao.mapper.UmsMemberMapper;
 import com.yiwen.mall.dao.model.UmsMember;
@@ -17,7 +18,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -47,7 +47,7 @@ public class UmsMemberServiceImpl implements UmsMemberService {
     private Long AUTH_CODE_EXPIRE_SECONDS;
 
     @Override
-    public CommonResult generateAuthCode(String telephone) {
+    public String generateAuthCode(String telephone) {
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
         for(int i = 0; i < 6; i++){
@@ -56,23 +56,19 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         //验证码绑定手机号并存储到redis
         redisService.set(REDIS_KEY_PREFIX_AUTH_CODE+telephone, sb.toString());
         redisService.expire(REDIS_KEY_PREFIX_AUTH_CODE+telephone, AUTH_CODE_EXPIRE_SECONDS);
-        return CommonResult.success(sb.toString(), "获取验证码成功");
+
+        return sb.toString();
     }
 
     //对输入的验证码进行校验
     @Override
-    public CommonResult verifyAuthCode(String telephone, String authCode) {
+    public boolean verifyAuthCode(String telephone, String authCode) {
         if (StringUtils.isEmpty(authCode)){
-            return CommonResult.failed("请输入验证码");
+            Asserts.fail(ResultCodeEnum.VERIFY_CODE_NULL);
         }
         String realAuthCode = redisService.get(REDIS_KEY_PREFIX_AUTH_CODE+telephone);
         //为防止出现空指针，用authCode（已经判过空）
-        boolean result = authCode.equals(realAuthCode);
-        if (result){
-            return CommonResult.success(null,"验证码校验成功");
-        }else {
-            return CommonResult.failed("验证码不正确");
-        }
+        return authCode.equals(realAuthCode);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.yiwen.mall.service.impl;
 
 import com.yiwen.mall.common.api.CommonResult;
+import com.yiwen.mall.common.api.ResultCodeEnum;
 import com.yiwen.mall.component.ampq.sender.CancelOrderSender;
 import com.yiwen.mall.dto.OrderParam;
 import com.yiwen.mall.service.OmsPortalOrderService;
@@ -26,7 +27,7 @@ public class OmsPortalOrderServiceImpl implements OmsPortalOrderService {
         LOGGER.info("process generateOrder");
         //下单完成后开启一个延迟消息，用于当用户没有付款时取消订单（orderId应该在下单后生成）
         sendDelayMessageCancelOrder(11L);
-        return CommonResult.success(null, "下单成功");
+        return CommonResult.success(ResultCodeEnum.ORDER_SUCCESS);
     }
 
     @Override

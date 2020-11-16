@@ -1,6 +1,9 @@
 package com.yiwen.mall.controller;
 
+import com.google.common.collect.ImmutableMap;
+import com.yiwen.mall.common.exception.Asserts;
 import com.yiwen.mall.common.api.CommonResult;
+import com.yiwen.mall.common.api.ResultCodeEnum;
 import com.yiwen.mall.service.UmsMemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,14 +35,18 @@ public class UmsMemberController {
     @ApiOperation("获取验证码")
     @GetMapping("/auth_code")
     public CommonResult getAuthCode(@RequestParam String telephone){
-        return umsMemberService.generateAuthCode(telephone);
+        return CommonResult.success(ImmutableMap.of("auth_code", umsMemberService.generateAuthCode(telephone)), ResultCodeEnum.GET_VERIFY_CODE_SUCCESS);
     }
 
 
     @ApiOperation("判断验证码是否正确")
     @PostMapping("/auth_code/verify")
     public CommonResult verifyAuthCode(@RequestParam String telephone, @RequestParam String authCode){
-        return umsMemberService.verifyAuthCode(telephone, authCode);
+        boolean verifyResult = umsMemberService.verifyAuthCode(telephone, authCode);
+        if (!verifyResult){
+            Asserts.fail(ResultCodeEnum.VERIFY_CODE_FAILED);
+        }
+        return CommonResult.success(ResultCodeEnum.VERIFY_CODE_SUCCESS);
     }
 
     @ApiOperation("会员登录")
@@ -49,7 +56,7 @@ public class UmsMemberController {
                               @RequestParam String password) {
         String token = umsMemberService.login(username, password);
         if (token == null) {
-            return CommonResult.validateFailed("用户名或密码错误");
+            Asserts.fail(ResultCodeEnum.UNAUTHORIZED);
         }
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put("token", token);
@@ -64,7 +71,7 @@ public class UmsMemberController {
         String token = request.getHeader(tokenHeader);
         String refreshToken = umsMemberService.refreshToken(token);
         if (refreshToken == null) {
-            return CommonResult.failed("token已经过期！");
+            Asserts.fail(ResultCodeEnum.UNAUTHORIZED);
         }
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put("token", refreshToken);

@@ -13,14 +13,21 @@ public interface UmsMemberService {
     /**
      * 生成验证码
      */
-    CommonResult generateAuthCode(String telephone);
+    String generateAuthCode(String telephone);
 
     /**
      * 判断验证码和手机号码是否匹配
      */
-    CommonResult verifyAuthCode(String telephone, String authCode);
+    boolean verifyAuthCode(String telephone, String authCode);
 
+    /**
+     * 刷新token
+     */
     String refreshToken(String token);
     UserDetails loadUserByUsername(String username);
+
+    /**
+     * 登录
+     */
     String login(String username, String password);
 }
