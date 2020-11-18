@@ -7,7 +7,7 @@ import java.util.Date;
 public class UmsAdmin implements Serializable {
     private Long id;
 
-    private String userName;
+    private String username;
 
     private String password;
 
@@ -42,12 +42,12 @@ public class UmsAdmin implements Serializable {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -121,7 +121,7 @@ public class UmsAdmin implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", userName=").append(userName);
+        sb.append(", username=").append(username);
         sb.append(", password=").append(password);
         sb.append(", icon=").append(icon);
         sb.append(", email=").append(email);

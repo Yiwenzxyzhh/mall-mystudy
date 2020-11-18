@@ -3,7 +3,7 @@
 <mapper namespace="com.yiwen.mall.dao.mapper.UmsAdminMapper">
   <resultMap id="BaseResultMap" type="com.yiwen.mall.dao.model.UmsAdmin">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_name" jdbcType="VARCHAR" property="username" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="icon" jdbcType="VARCHAR" property="icon" />
     <result column="email" jdbcType="VARCHAR" property="email" />
@@ -34,7 +34,7 @@
       email, nick_name, note,
       create_time, login_time, status
       )
-    values (#{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR},
+    values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{icon,jdbcType=VARCHAR},
       #{email,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR},
       #{createTime,jdbcType=TIMESTAMP}, #{loginTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}
       )
@@ -45,7 +45,7 @@
     </selectKey>
     insert into ums_admin
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="userName != null">
+      <if test="username != null">
         user_name,
       </if>
       <if test="password != null">
@@ -74,8 +74,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="userName != null">
-        #{userName,jdbcType=VARCHAR},
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
       </if>
       <if test="password != null">
         #{password,jdbcType=VARCHAR},
@@ -106,8 +106,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.yiwen.mall.dao.model.UmsAdmin">
     update ums_admin
     <set>
-      <if test="userName != null">
-        user_name = #{userName,jdbcType=VARCHAR},
+      <if test="username != null">
+        user_name = #{username,jdbcType=VARCHAR},
       </if>
       <if test="password != null">
         password = #{password,jdbcType=VARCHAR},
@@ -138,7 +138,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.yiwen.mall.dao.model.UmsAdmin">
     update ums_admin
-    set user_name = #{userName,jdbcType=VARCHAR},
+    set user_name = #{username,jdbcType=VARCHAR},
         password = #{password,jdbcType=VARCHAR},
         icon = #{icon,jdbcType=VARCHAR},
         email = #{email,jdbcType=VARCHAR},
@@ -157,8 +157,8 @@
         <if test="id != null">
             and id = #{id}
         </if>
-        <if test="userName != null">
-            and user_name = #{userName}
+        <if test="username != null">
+            and user_name = #{username}
         </if>
     </where>
     order by create_time DESC

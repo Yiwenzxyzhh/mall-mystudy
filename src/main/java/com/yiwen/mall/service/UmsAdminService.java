@@ -15,7 +15,7 @@ public interface UmsAdminService {
     /**
      * 根据用户名获取后台管理员
      */
-    UmsAdmin getAdminByUsername(String userName);
+    UmsAdmin getAdminByUsername(String username);
 
     /**
      * 注册功能

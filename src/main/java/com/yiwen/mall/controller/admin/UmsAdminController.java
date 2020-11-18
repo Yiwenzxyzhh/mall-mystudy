@@ -75,7 +75,7 @@ public class UmsAdminController {
     public CommonResult getUserInfo(Principal principal){//Principal principal 走spring security验证的
         String username = principal.getName();
         UmsAdmin umsAdmin = adminService.getAdminByUsername(username);
-        return CommonResult.success(ImmutableMap.of("username", umsAdmin.getUserName(),
+        return CommonResult.success(ImmutableMap.of("username", umsAdmin.getUsername(),
                 "roles", "TEST",
                 "icon", umsAdmin.getIcon()));
     }
