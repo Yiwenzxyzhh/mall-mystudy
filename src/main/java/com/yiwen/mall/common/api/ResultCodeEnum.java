@@ -20,11 +20,16 @@ public enum ResultCodeEnum implements IErrorCode {
     GET_VERIFY_CODE_SUCCESS(1003,"获取验证码成功"),
     VERIFY_CODE_SUCCESS(1003,"验证码校验成功"),
     USERNAME_OR_PASSWORD_INCORRECT(1004,"用户名或密码错误"),
+    REGISTER_SUCCESS(1005, "注册成功"),
+    VERIFY_CODE_INCORRECT(1006,"验证码错误"),
+    USER_ALREADY_EXIST(1007,"用户已经存在"),
 
     //order
     ORDER_SUCCESS(2000,"下单成功"),
 
     //admin
+
+
     ;
 
     private long code;

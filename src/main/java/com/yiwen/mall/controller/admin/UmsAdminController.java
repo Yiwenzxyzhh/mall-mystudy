@@ -1,5 +1,6 @@
 package com.yiwen.mall.controller.admin;
 
+import com.google.common.collect.ImmutableMap;
 import com.yiwen.mall.common.exception.Asserts;
 import com.yiwen.mall.common.api.CommonResult;
 import com.yiwen.mall.common.api.ResultCodeEnum;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,15 +55,34 @@ public class UmsAdminController {
         if (token == null) {
             Asserts.fail(ResultCodeEnum.USERNAME_OR_PASSWORD_INCORRECT);
         }
-        Map<String, String> tokenMap = new HashMap<>();
-        tokenMap.put("token", token);
-        tokenMap.put("tokenHead", tokenHead);
-        return CommonResult.success(tokenMap);
+        return CommonResult.success(ImmutableMap.of("token", token, "tokenHead", tokenHead));
+    }
+
+    @ApiOperation(value = "刷新token")
+    @RequestMapping(value = "/refreshToken", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult refreshToken(HttpServletRequest request) {
+        String token = request.getHeader(tokenHeader);
+        String refreshToken = adminService.refreshToken(token);
+        if (refreshToken == null) {
+            Asserts.fail(ResultCodeEnum.UNAUTHORIZED);
+        }
+        return CommonResult.success(ImmutableMap.of("token", refreshToken, "tokenHead", tokenHead));
+    }
+
+    @ApiOperation("获取当前登录用户信息")
+    @GetMapping("/info")
+    public CommonResult getUserInfo(Principal principal){//Principal principal 走spring security验证的
+        String username = principal.getName();
+        UmsAdmin umsAdmin = adminService.getAdminByUsername(username);
+        return CommonResult.success(ImmutableMap.of("username", umsAdmin.getUserName(),
+                "roles", "TEST",
+                "icon", umsAdmin.getIcon()));
     }
 
     @ApiOperation("获取用户所有权限（包括+-权限）")
     @GetMapping(value = "/permission/{adminId}")
-    public CommonResult<List<UmsPermission>> getPermissionList(@PathVariable Long adminId) {
+    public CommonResult getPermissionList(@PathVariable Long adminId) {
         List<UmsPermission> permissionList = adminService.getPermissionList(adminId);
         return CommonResult.success(permissionList);
     }

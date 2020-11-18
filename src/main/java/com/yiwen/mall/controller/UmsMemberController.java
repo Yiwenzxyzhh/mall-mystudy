@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.yiwen.mall.common.exception.Asserts;
 import com.yiwen.mall.common.api.CommonResult;
 import com.yiwen.mall.common.api.ResultCodeEnum;
+import com.yiwen.mall.dao.model.UmsMember;
 import com.yiwen.mall.service.UmsMemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,8 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author ywxie
@@ -49,6 +48,17 @@ public class UmsMemberController {
         return CommonResult.success(ResultCodeEnum.VERIFY_CODE_SUCCESS);
     }
 
+    @ApiOperation("会员注册")
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult register(@RequestParam String username,
+                                 @RequestParam String password,
+                                 @RequestParam String telephone,
+                                 @RequestParam String authCode) {
+        UmsMember umsMember = umsMemberService.register(username, password, telephone, authCode);
+        return CommonResult.success(umsMember, ResultCodeEnum.REGISTER_SUCCESS);
+    }
+
     @ApiOperation("会员登录")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
@@ -56,12 +66,9 @@ public class UmsMemberController {
                               @RequestParam String password) {
         String token = umsMemberService.login(username, password);
         if (token == null) {
-            Asserts.fail(ResultCodeEnum.UNAUTHORIZED);
+            Asserts.fail(ResultCodeEnum.USERNAME_OR_PASSWORD_INCORRECT);
         }
-        Map<String, String> tokenMap = new HashMap<>();
-        tokenMap.put("token", token);
-        tokenMap.put("tokenHead", tokenHead);
-        return CommonResult.success(tokenMap);
+        return CommonResult.success(ImmutableMap.of("token", token, "tokenHead", tokenHead));
     }
 
     @ApiOperation(value = "刷新token")
@@ -73,10 +80,7 @@ public class UmsMemberController {
         if (refreshToken == null) {
             Asserts.fail(ResultCodeEnum.UNAUTHORIZED);
         }
-        Map<String, String> tokenMap = new HashMap<>();
-        tokenMap.put("token", refreshToken);
-        tokenMap.put("tokenHead", tokenHead);
-        return CommonResult.success(tokenMap);
+        return CommonResult.success(ImmutableMap.of("token", refreshToken, "tokenHead", tokenHead));
     }
 
 }

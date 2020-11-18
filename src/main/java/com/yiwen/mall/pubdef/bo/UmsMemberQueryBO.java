@@ -12,13 +12,13 @@ import lombok.Setter;
 @Setter
 public class UmsMemberQueryBO {
     private String username;
-    private Long id;
     private String phone;
 
     public UmsMemberQueryBO() {
     }
 
-    public UmsMemberQueryBO(String username) {
+    public UmsMemberQueryBO(String username, String phone) {
         this.username = username;
+        this.phone = phone;
     }
 }

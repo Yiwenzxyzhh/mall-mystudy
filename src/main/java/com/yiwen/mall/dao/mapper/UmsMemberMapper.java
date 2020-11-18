@@ -22,5 +22,5 @@ public interface UmsMemberMapper {
 
     List<UmsMember> listAll();
 
-    UmsMember selectByQueryBO(UmsMemberQueryBO queryBO);
+    List<UmsMember> listByQueryBO(UmsMemberQueryBO queryBO);
 }

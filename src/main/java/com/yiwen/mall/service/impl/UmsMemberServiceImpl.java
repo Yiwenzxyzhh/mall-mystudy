@@ -3,11 +3,15 @@ package com.yiwen.mall.service.impl;
 import com.yiwen.mall.common.exception.Asserts;
 import com.yiwen.mall.common.api.ResultCodeEnum;
 import com.yiwen.mall.common.utils.JwtTokenUtil;
+import com.yiwen.mall.dao.mapper.UmsMemberLevelMapper;
 import com.yiwen.mall.dao.mapper.UmsMemberMapper;
 import com.yiwen.mall.dao.model.UmsMember;
+import com.yiwen.mall.dao.model.UmsMemberLevel;
 import com.yiwen.mall.dto.MemberDetails;
+import com.yiwen.mall.pubdef.bo.UmsMemberLevelQueryBO;
 import com.yiwen.mall.pubdef.bo.UmsMemberQueryBO;
 import com.yiwen.mall.service.RedisService;
+import com.yiwen.mall.service.UmsMemberCacheService;
 import com.yiwen.mall.service.UmsMemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +24,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -36,15 +43,13 @@ public class UmsMemberServiceImpl implements UmsMemberService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
-    private RedisService redisService;
-    @Autowired
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private UmsMemberMapper umsMemberMapper;
-    @Value("${redis.key.prefix.authCode}")
-    private String REDIS_KEY_PREFIX_AUTH_CODE;
-    @Value("${redis.key.expire.authCode}")
-    private Long AUTH_CODE_EXPIRE_SECONDS;
+    @Autowired
+    private UmsMemberLevelMapper memberLevelMapper;
+    @Autowired
+    private UmsMemberCacheService umsMemberCacheService;
 
     @Override
     public String generateAuthCode(String telephone) {
@@ -53,10 +58,7 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         for(int i = 0; i < 6; i++){
             sb.append(random.nextInt(10));
         }
-        //验证码绑定手机号并存储到redis
-        redisService.set(REDIS_KEY_PREFIX_AUTH_CODE+telephone, sb.toString());
-        redisService.expire(REDIS_KEY_PREFIX_AUTH_CODE+telephone, AUTH_CODE_EXPIRE_SECONDS);
-
+        umsMemberCacheService.setAuthCode(telephone, sb.toString());
         return sb.toString();
     }
 
@@ -66,14 +68,9 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         if (StringUtils.isEmpty(authCode)){
             Asserts.fail(ResultCodeEnum.VERIFY_CODE_NULL);
         }
-        String realAuthCode = redisService.get(REDIS_KEY_PREFIX_AUTH_CODE+telephone);
+        String realAuthCode = umsMemberCacheService.getAuthCode(telephone);
         //为防止出现空指针，用authCode（已经判过空）
         return authCode.equals(realAuthCode);
-    }
-
-    @Override
-    public String refreshToken(String token) {
-        return jwtTokenUtil.refreshHeadToken(token);
     }
 
     @Override
@@ -83,6 +80,34 @@ public class UmsMemberServiceImpl implements UmsMemberService {
             return new MemberDetails(umsMember);
         }
         return null;
+    }
+
+    @Override
+    public UmsMember register(String username, String password, String telephone, String authCode) {
+        //验证验证码
+        if(!verifyAuthCode(authCode,telephone)){
+            Asserts.fail(ResultCodeEnum.VERIFY_CODE_INCORRECT);
+        }
+        //查询是否已有该用户
+        List<UmsMember> umsMembers = listUserByQueryBO(new UmsMemberQueryBO(username, telephone));
+        if (!CollectionUtils.isEmpty(umsMembers)) {
+            Asserts.fail(ResultCodeEnum.USER_ALREADY_EXIST);
+        }
+        //没有该用户进行添加操作
+        UmsMember umsMember = new UmsMember();
+        umsMember.setUsername(username);
+        umsMember.setPhone(telephone);
+        umsMember.setPassword(passwordEncoder.encode(password));
+        umsMember.setCreateTime(new Date());
+        umsMember.setStatus(1);
+        //获取默认会员等级并设置
+        List<UmsMemberLevel> memberLevelList = memberLevelMapper.listByQueryBO(new UmsMemberLevelQueryBO(1));
+        if (!CollectionUtils.isEmpty(memberLevelList)) {
+            umsMember.setMemberLevelId(memberLevelList.get(0).getId());
+        }
+        umsMemberMapper.insert(umsMember);
+        umsMember.setPassword(null);
+        return umsMember;
     }
 
     @Override
@@ -103,7 +128,23 @@ public class UmsMemberServiceImpl implements UmsMemberService {
         return token;
     }
 
-    public UmsMember getUserByUsername(String username){
-        return umsMemberMapper.selectByQueryBO(new UmsMemberQueryBO(username));
+    /**
+     * 刷新token
+     */
+    @Override
+    public String refreshToken(String token) {
+        return jwtTokenUtil.refreshHeadToken(token);
+    }
+
+    public List<UmsMember> listUserByQueryBO(UmsMemberQueryBO queryBO){
+        return umsMemberMapper.listByQueryBO(queryBO);
+    }
+
+    private UmsMember getUserByUsername(String username){
+        List<UmsMember> umsMembers = listUserByQueryBO(new UmsMemberQueryBO(username, null));
+        if (!CollectionUtils.isEmpty(umsMembers)){
+            return umsMembers.get(0);
+        }
+        return null;
     }
 }

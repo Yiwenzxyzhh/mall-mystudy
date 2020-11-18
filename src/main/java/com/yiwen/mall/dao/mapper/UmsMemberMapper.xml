@@ -259,13 +259,11 @@
     select <include refid="Base_Column_List" />
     from ums_member
   </select>
-  <select id="selectByQueryBO" resultType="com.yiwen.mall.pubdef.bo.UmsMemberQueryBO" resultMap="BaseResultMap">
+
+  <select id="listByQueryBO" resultType="com.yiwen.mall.pubdef.bo.UmsMemberQueryBO" resultMap="BaseResultMap">
     select <include refid="Base_Column_List" />
     from ums_member
     <where>
-      <if test="id != null">
-        and id = #{id}
-      </if>
       <if test="username != null">
         and username = #{username}
       </if>

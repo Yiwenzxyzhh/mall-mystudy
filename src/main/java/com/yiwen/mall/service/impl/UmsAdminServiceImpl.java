@@ -8,8 +8,10 @@ import com.yiwen.mall.dao.custom.UmsAdminRoleRelationDao;
 import com.yiwen.mall.dao.mapper.UmsAdminMapper;
 import com.yiwen.mall.dao.model.UmsAdmin;
 import com.yiwen.mall.dao.model.UmsPermission;
+import com.yiwen.mall.dto.AdminUserDetails;
 import com.yiwen.mall.pubdef.bo.UmsAdminQueryBO;
 import com.yiwen.mall.pubdef.pubenum.UmsAdminStatusEnum;
+import com.yiwen.mall.service.UmsAdminCacheService;
 import com.yiwen.mall.service.UmsAdminService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +52,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     private UmsAdminMapper adminMapper;
     @Autowired
     private UmsAdminRoleRelationDao adminRoleRelationDao;
+    //专门用来操作Redis缓存的业务类
+    @Autowired
+    private UmsAdminCacheService adminCacheService;
 
     @Override
     public UmsAdmin getAdminByUsername(String userName) {
@@ -71,12 +77,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         UmsAdminQueryBO umsAdminQueryBO = new UmsAdminQueryBO();
         umsAdminQueryBO.setUserName(umsAdmin.getUserName());
         List<UmsAdmin> umsAdminList = adminMapper.listByQueryBO(umsAdminQueryBO);
-//        UmsAdminExample example = new UmsAdminExample();
-//        example.createCriteria().andUsernameEqualTo(umsAdmin.getUsername());
-//        List<UmsAdmin> umsAdminList = adminMapper.selectByExample(example);
         if (umsAdminList.size() > 0) {
             //错误提示：已存在相同用户名
-            throw new BusinessException(ResultCodeEnum.USER_NAME_DUPLICATED);
+            Asserts.fail(ResultCodeEnum.USER_NAME_DUPLICATED);
         }
         //将密码进行加密操作
         String encodePassword = passwordEncoder.encode(umsAdmin.getPassword());
@@ -105,10 +108,35 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         return token;
     }
 
+    /**
+     * 刷新token
+     *
+     * @param token
+     */
+    @Override
+    public String refreshToken(String token) {
+        return jwtTokenUtil.refreshHeadToken(token);
+    }
 
     @Override
     public List<UmsPermission> getPermissionList(Long adminId) {
         return adminRoleRelationDao.getPermissionList(adminId);
     }
 
+    /**
+     * 获取用户信息
+     */
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        //获取用户信息
+        UmsAdmin admin = getAdminByUsername(username);
+        if (admin != null) {
+            //获取用户的资源信息
+//            List<UmsResource> resourceList = getResourceList(admin.getId());
+//            return new AdminUserDetails(admin,resourceList);
+            List<UmsPermission> permissionList = getPermissionList(admin.getId());
+            return new AdminUserDetails(admin, permissionList);
+        }
+        throw new UsernameNotFoundException(ResultCodeEnum.USERNAME_OR_PASSWORD_INCORRECT.getMessage());
+    }
 }

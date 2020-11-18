@@ -1,6 +1,6 @@
 package com.yiwen.mall.service;
 
-import com.yiwen.mall.common.api.CommonResult;
+import com.yiwen.mall.dao.model.UmsMember;
 import org.springframework.security.core.userdetails.UserDetails;
 
 /**
@@ -21,13 +21,22 @@ public interface UmsMemberService {
     boolean verifyAuthCode(String telephone, String authCode);
 
     /**
-     * 刷新token
+     * 获取用户信息
      */
-    String refreshToken(String token);
     UserDetails loadUserByUsername(String username);
 
     /**
-     * 登录
+     * 注册
+     */
+    UmsMember register(String username, String password, String telephone, String authCode);
+
+    /**
+     * 登录后获取token
      */
     String login(String username, String password);
+
+    /**
+     * 刷新token
+     */
+    String refreshToken(String token);
 }

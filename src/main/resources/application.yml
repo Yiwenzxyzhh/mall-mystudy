@@ -73,3 +73,9 @@ secure:
       - /home/**
       - /admin/login
       - /admin/register
+      - /brand/**
+
+logging:
+  level:
+    com.yiwen.mall.dao: error
+    com.yiwen.mall.dao.mapper: DEBUG
