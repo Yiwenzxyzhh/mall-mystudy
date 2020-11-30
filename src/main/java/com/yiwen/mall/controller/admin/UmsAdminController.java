@@ -77,7 +77,8 @@ public class UmsAdminController {
         UmsAdmin umsAdmin = adminService.getAdminByUsername(username);
         return CommonResult.success(ImmutableMap.of("username", umsAdmin.getUsername(),
                 "roles", "TEST",
-                "icon", umsAdmin.getIcon()));
+                "icon", umsAdmin.getIcon(),
+                "menus", adminService.getPermissionList(umsAdmin.getId())));
     }
 
     @ApiOperation("获取用户所有权限（包括+-权限）")
