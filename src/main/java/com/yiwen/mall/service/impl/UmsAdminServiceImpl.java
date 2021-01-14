@@ -92,7 +92,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     public String login(String username, String password) {
         String token = null;
         try {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = loadUserByUsername(username);
             if (userDetails == null){
                 Asserts.fail(ResultCodeEnum.USERNAME_OR_PASSWORD_INCORRECT);
             }
