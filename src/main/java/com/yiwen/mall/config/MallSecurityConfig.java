@@ -1,5 +1,6 @@
 package com.yiwen.mall.config;
 
+import com.yiwen.mall.service.UmsAdminService;
 import com.yiwen.mall.service.UmsMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,12 +20,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public class MallSecurityConfig extends SecurityConfig {
 
     @Autowired
-    private UmsMemberService umsMemberService;
+    private UmsAdminService adminService;
 
     @Override
     @Bean
     public UserDetailsService userDetailsService(){
         //获取登录用户信息
-        return username -> umsMemberService.loadUserByUsername(username);
+        return username -> adminService.loadUserByUsername(username);
     }
 }
