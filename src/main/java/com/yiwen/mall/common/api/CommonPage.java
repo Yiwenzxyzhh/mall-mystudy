@@ -1,6 +1,7 @@
 package com.yiwen.mall.common.api;
 
 import com.github.pagehelper.PageInfo;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -21,12 +22,26 @@ public class CommonPage<T> {
      */
     public static <T> CommonPage<T> restPage(List<T> list) {
         CommonPage<T> result = new CommonPage<T>();
+        //通过构造PageInfo对象获取分页信息，如当前页码，总页数，总条数
         PageInfo<T> pageInfo = new PageInfo<T>(list);
         result.setTotalPage(pageInfo.getPages());
         result.setPageNum(pageInfo.getPageNum());
         result.setPageSize(pageInfo.getPageSize());
         result.setTotal(pageInfo.getTotal());
         result.setList(pageInfo.getList());
+        return result;
+    }
+
+    /**
+     * 将SpringData分页后的list转为分页信息
+     */
+    public static <T> CommonPage<T> restPage(Page<T> pageInfo) {
+        CommonPage<T> result = new CommonPage<T>();
+        result.setTotalPage(pageInfo.getTotalPages());
+        result.setPageNum(pageInfo.getNumber());
+        result.setPageSize(pageInfo.getSize());
+        result.setTotal(pageInfo.getTotalElements());
+        result.setList(pageInfo.getContent());
         return result;
     }
 

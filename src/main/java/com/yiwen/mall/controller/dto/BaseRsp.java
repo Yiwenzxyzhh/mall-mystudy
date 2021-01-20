@@ -1,5 +1,7 @@
 package com.yiwen.mall.controller.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.io.Serializable;
 
 /**
@@ -7,9 +9,10 @@ import java.io.Serializable;
  * @date 2020/10/12 11:31
  * @describe
  */
+@JsonInclude
 public class BaseRsp implements Serializable {
 
-    private int status;
+    private int code;
     private String message;
     private Object data;
 
