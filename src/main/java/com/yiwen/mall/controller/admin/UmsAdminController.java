@@ -1,13 +1,17 @@
 package com.yiwen.mall.controller.admin;
 
+import cn.hutool.core.collection.CollUtil;
 import com.google.common.collect.ImmutableMap;
+import com.yiwen.mall.common.api.IErrorCode;
 import com.yiwen.mall.common.exception.Asserts;
 import com.yiwen.mall.common.api.CommonResult;
 import com.yiwen.mall.common.api.ResultCodeEnum;
 import com.yiwen.mall.dao.model.UmsAdmin;
 import com.yiwen.mall.dao.model.UmsPermission;
+import com.yiwen.mall.dao.model.UmsRole;
 import com.yiwen.mall.dto.UmsAdminLoginParam;
 import com.yiwen.mall.service.UmsAdminService;
+import com.yiwen.mall.service.UmsRoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +21,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author ywxie
@@ -33,6 +39,8 @@ public class UmsAdminController {
 
     @Autowired
     private UmsAdminService adminService;
+    @Autowired
+    private UmsRoleService roleService;
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
@@ -73,12 +81,21 @@ public class UmsAdminController {
     @ApiOperation("获取当前登录用户信息")
     @GetMapping("/info")
     public CommonResult getUserInfo(Principal principal){//Principal principal 走spring security验证的
+        if(principal == null){
+            Asserts.fail(ResultCodeEnum.FORBIDDEN);
+        }
         String username = principal.getName();
         UmsAdmin umsAdmin = adminService.getAdminByUsername(username);
-        return CommonResult.success(ImmutableMap.of("username", umsAdmin.getUsername(),
-                "roles", "TEST",
-                "icon", umsAdmin.getIcon(),
-                "menus", adminService.getPermissionList(umsAdmin.getId())));
+        List<UmsRole> roleList = adminService.getRoleList(umsAdmin.getId());
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", umsAdmin.getUsername());
+        data.put("icon", umsAdmin.getIcon());
+        data.put("menus", roleService.getMenuList(umsAdmin.getId()));
+        if(CollUtil.isNotEmpty(roleList)){
+            List<String> roles = roleList.stream().map(UmsRole::getName).collect(Collectors.toList());
+            data.put("roles",roles);
+        }
+        return CommonResult.success(data);
     }
 
     @ApiOperation("获取用户所有权限（包括+-权限）")

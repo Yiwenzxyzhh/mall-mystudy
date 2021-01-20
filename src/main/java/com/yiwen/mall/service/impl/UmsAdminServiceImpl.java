@@ -8,6 +8,7 @@ import com.yiwen.mall.dao.custom.UmsAdminRoleRelationDao;
 import com.yiwen.mall.dao.mapper.UmsAdminMapper;
 import com.yiwen.mall.dao.model.UmsAdmin;
 import com.yiwen.mall.dao.model.UmsPermission;
+import com.yiwen.mall.dao.model.UmsRole;
 import com.yiwen.mall.dto.AdminUserDetails;
 import com.yiwen.mall.pubdef.bo.UmsAdminQueryBO;
 import com.yiwen.mall.pubdef.pubenum.UmsAdminStatusEnum;
@@ -110,8 +111,6 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     /**
      * 刷新token
-     *
-     * @param token
      */
     @Override
     public String refreshToken(String token) {
@@ -121,6 +120,14 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     @Override
     public List<UmsPermission> getPermissionList(Long adminId) {
         return adminRoleRelationDao.getPermissionList(adminId);
+    }
+
+    /**
+     * 获取用户对于角色
+     */
+    @Override
+    public List<UmsRole> getRoleList(Long adminId) {
+        return adminRoleRelationDao.getRoleList(adminId);
     }
 
     /**
