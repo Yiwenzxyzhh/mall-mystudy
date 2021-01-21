@@ -61,9 +61,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
 
     @Override
     public UmsAdmin getAdminByUsername(String username) {
-        UmsAdminQueryBO umsAdminQueryBO = new UmsAdminQueryBO();
-        umsAdminQueryBO.setUsername(username);
-        List<UmsAdmin> adminList = adminMapper.listByQueryBO(umsAdminQueryBO);
+        List<UmsAdmin> adminList = adminMapper.listByQueryBO(new UmsAdminQueryBO(null, username, false));
         if (adminList != null && adminList.size() > 0) {
             return adminList.get(0);
         }
@@ -77,10 +75,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         umsAdmin.setCreateTime(new Date());
         umsAdmin.setStatus(UmsAdminStatusEnum.EFFECTIVE.getStatus());
         //查询是否有相同用户名的用户
-        UmsAdminQueryBO umsAdminQueryBO = new UmsAdminQueryBO();
-        umsAdminQueryBO.setUsername(umsAdmin.getUsername());
-        umsAdminQueryBO.setLikeFindFlag(false);
-        List<UmsAdmin> umsAdminList = adminMapper.listByQueryBO(umsAdminQueryBO);
+        List<UmsAdmin> umsAdminList = adminMapper.listByQueryBO(new UmsAdminQueryBO(null, umsAdmin.getUsername(), false));
         if (umsAdminList.size() > 0) {
             //错误提示：已存在相同用户名
             Asserts.fail(ResultCodeEnum.USER_NAME_DUPLICATED);
