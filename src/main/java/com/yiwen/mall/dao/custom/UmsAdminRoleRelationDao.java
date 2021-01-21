@@ -23,6 +23,6 @@ public interface UmsAdminRoleRelationDao {
     /**
      * 获取用于所有角色
      */
-    List<UmsRole> getRoleList(@org.apache.ibatis.annotations.Param("adminId") Long adminId);
+    List<UmsRole> getRoleList(@Param("adminId") Long adminId);
 
 }
