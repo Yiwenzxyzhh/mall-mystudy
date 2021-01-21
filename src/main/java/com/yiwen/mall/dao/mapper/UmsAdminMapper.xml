@@ -153,14 +153,28 @@
     select
     <include refid="Base_Column_List" />
     from ums_admin
-    <where>
-        <if test="id != null">
+    <choose>
+      <when test="likeFindFlag == true ">
+        <where>
+          <if test="id != null">
             and id = #{id}
-        </if>
-        <if test="username != null">
+          </if>
+          <if test="username != null">
+            and user_name like #{username}
+          </if>
+        </where>
+      </when>
+      <otherwise>
+        <where>
+          <if test="id != null">
+            and id = #{id}
+          </if>
+          <if test="username != null">
             and user_name = #{username}
-        </if>
-    </where>
+          </if>
+        </where>
+      </otherwise>
+    </choose>
     order by create_time DESC
   </select>
 

@@ -14,7 +14,7 @@
     id, name, description, admin_count, create_time, status, sort
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from ums_role
     where id = #{id,jdbcType=BIGINT}
@@ -27,10 +27,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into ums_role (name, description, admin_count, 
+    insert into ums_role (name, description, admin_count,
       create_time, status, sort
       )
-    values (#{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{adminCount,jdbcType=INTEGER}, 
+    values (#{name,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{adminCount,jdbcType=INTEGER},
       #{createTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{sort,jdbcType=INTEGER}
       )
   </insert>
@@ -114,4 +114,9 @@
       sort = #{sort,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <select id="list" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from ums_role
+  </select>
 </mapper>
