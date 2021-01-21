@@ -16,11 +16,23 @@ public class UmsAdminQueryBO {
 
     private String username;
 
+    private Boolean likeFindFlag;
+
+    public UmsAdminQueryBO() {
+    }
+
+    public UmsAdminQueryBO(Long id, String username, Boolean likeFindFlag) {
+        this.id = id;
+        this.username = username;
+        this.likeFindFlag = likeFindFlag;
+    }
+
     @Override
     public String toString() {
         return "UmsAdminQueryBO{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
+                ", likeFindFlag=" + likeFindFlag +
                 '}';
     }
 }

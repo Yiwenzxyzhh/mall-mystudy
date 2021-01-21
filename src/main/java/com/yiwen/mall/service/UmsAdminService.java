@@ -50,4 +50,11 @@ public interface UmsAdminService {
      * 获取用户信息
      */
     UserDetails loadUserByUsername(String username);
+
+    /**
+     * 根据用户名或姓名分页获取用户列表
+     */
+    List<UmsAdmin> listAdmin(String username, Integer pageNum, Integer pageSize);
+
+    List<UmsAdmin> listAll();
 }

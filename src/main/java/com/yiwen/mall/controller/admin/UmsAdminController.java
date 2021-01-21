@@ -1,8 +1,7 @@
 package com.yiwen.mall.controller.admin;
 
-import cn.hutool.core.collection.CollUtil;
 import com.google.common.collect.ImmutableMap;
-import com.yiwen.mall.common.api.IErrorCode;
+import com.yiwen.mall.common.api.CommonPage;
 import com.yiwen.mall.common.exception.Asserts;
 import com.yiwen.mall.common.api.CommonResult;
 import com.yiwen.mall.common.api.ResultCodeEnum;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,6 +94,15 @@ public class UmsAdminController {
             data.put("roles",roles);
         }
         return CommonResult.success(data);
+    }
+
+    @ApiOperation("根据用户名或姓名分页获取用户列表")
+    @GetMapping("/list")
+    public CommonResult listUmsAdmin(@RequestParam(value = "keyword", required = false) String keyword,
+                                     @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize,
+                                     @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
+        List<UmsAdmin> adminList = adminService.listAdmin(keyword, pageNum, pageSize);
+        return CommonResult.success(CommonPage.restPage(adminList));
     }
 
     @ApiOperation("获取用户所有权限（包括+-权限）")

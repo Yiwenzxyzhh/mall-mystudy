@@ -1,5 +1,6 @@
 package com.yiwen.mall.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.yiwen.mall.common.exception.Asserts;
 import com.yiwen.mall.common.api.ResultCodeEnum;
 import com.yiwen.mall.common.exception.BusinessException;
@@ -28,6 +29,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -77,6 +79,7 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         //查询是否有相同用户名的用户
         UmsAdminQueryBO umsAdminQueryBO = new UmsAdminQueryBO();
         umsAdminQueryBO.setUsername(umsAdmin.getUsername());
+        umsAdminQueryBO.setLikeFindFlag(false);
         List<UmsAdmin> umsAdminList = adminMapper.listByQueryBO(umsAdminQueryBO);
         if (umsAdminList.size() > 0) {
             //错误提示：已存在相同用户名
@@ -143,5 +146,23 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             return new AdminUserDetails(admin, permissionList);
         }
         throw new UsernameNotFoundException(ResultCodeEnum.USERNAME_OR_PASSWORD_INCORRECT.getMessage());
+    }
+
+    /**
+     * 根据用户名或姓名分页获取用户列表
+     */
+    @Override
+    public List<UmsAdmin> listAdmin(String username, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        if (StringUtils.isEmpty(username)){
+            return listAll();
+        }
+        //模糊查询匹配
+        return adminMapper.listByQueryBO(new UmsAdminQueryBO(null, "%" + username + "%", true));
+    }
+
+    @Override
+    public List<UmsAdmin> listAll() {
+        return adminMapper.listByQueryBO(new UmsAdminQueryBO(null, null, null));
     }
 }
