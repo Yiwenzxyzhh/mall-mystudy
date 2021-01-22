@@ -132,7 +132,13 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
         adminLoginLog.setIp(RequestUtil.getRequestIp(request));
-        loginLogMapper.insertSelective(adminLoginLog);
+        int count = loginLogMapper.insertSelective(adminLoginLog);
+        if (count > 0){
+            UmsAdmin updateAdmin = new UmsAdmin();
+            updateAdmin.setId(admin.getId());
+            updateAdmin.setLoginTime(adminLoginLog.getCreateTime());
+            adminMapper.updateByPrimaryKeySelective(updateAdmin);
+        }
     }
 
     /**
