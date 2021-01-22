@@ -57,4 +57,9 @@ public interface UmsAdminService {
     List<UmsAdmin> listAdmin(String username, Integer pageNum, Integer pageSize);
 
     List<UmsAdmin> listAll();
+
+    /**
+     * 修改指定用户信息
+     */
+    int updateAdmin(Long id, UmsAdmin admin);
 }

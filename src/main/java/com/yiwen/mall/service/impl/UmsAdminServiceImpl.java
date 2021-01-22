@@ -3,11 +3,13 @@ package com.yiwen.mall.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.yiwen.mall.common.exception.Asserts;
 import com.yiwen.mall.common.api.ResultCodeEnum;
-import com.yiwen.mall.common.exception.BusinessException;
 import com.yiwen.mall.common.utils.JwtTokenUtil;
+import com.yiwen.mall.common.utils.RequestUtil;
 import com.yiwen.mall.dao.custom.UmsAdminRoleRelationDao;
+import com.yiwen.mall.dao.mapper.UmsAdminLoginLogMapper;
 import com.yiwen.mall.dao.mapper.UmsAdminMapper;
 import com.yiwen.mall.dao.model.UmsAdmin;
+import com.yiwen.mall.dao.model.UmsAdminLoginLog;
 import com.yiwen.mall.dao.model.UmsPermission;
 import com.yiwen.mall.dao.model.UmsRole;
 import com.yiwen.mall.dto.AdminUserDetails;
@@ -25,12 +27,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -43,8 +47,7 @@ import java.util.List;
 public class UmsAdminServiceImpl implements UmsAdminService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UmsAdminServiceImpl.class);
-    @Autowired
-    private UserDetailsService userDetailsService;
+
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
@@ -55,12 +58,18 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     private UmsAdminMapper adminMapper;
     @Autowired
     private UmsAdminRoleRelationDao adminRoleRelationDao;
+    @Autowired
+    private UmsAdminLoginLogMapper loginLogMapper;
     //专门用来操作Redis缓存的业务类
     @Autowired
     private UmsAdminCacheService adminCacheService;
 
     @Override
     public UmsAdmin getAdminByUsername(String username) {
+        UmsAdmin admin = adminCacheService.getAdminByUsername(username);
+        if (admin != null){
+            return admin;
+        }
         List<UmsAdmin> adminList = adminMapper.listByQueryBO(new UmsAdminQueryBO(null, username, false));
         if (adminList != null && adminList.size() > 0) {
             return adminList.get(0);
@@ -101,10 +110,35 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             token = jwtTokenUtil.generateTokenByUserDetails(userDetails);
+            insertLoginLog(username);
         } catch (AuthenticationException e) {
             LOGGER.warn("登录异常:{}", e.getMessage());
         }
         return token;
+    }
+
+    /**
+     * 添加登录记录
+     * @param username 用户名
+     */
+    private void insertLoginLog(String username) {
+        UmsAdmin admin = getAdminByUsername(username);
+        if (admin == null){
+            Asserts.fail(ResultCodeEnum.USER_NOT_EXIST);
+        }
+        UmsAdminLoginLog adminLoginLog = new UmsAdminLoginLog();
+        adminLoginLog.setAdminId(admin.getId());
+        adminLoginLog.setCreateTime(new Date());
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        adminLoginLog.setIp(RequestUtil.getRequestIp(request));
+        int count = loginLogMapper.insertSelective(adminLoginLog);
+        if (count > 0){
+            UmsAdmin updateAdmin = new UmsAdmin();
+            updateAdmin.setId(admin.getId());
+            updateAdmin.setLoginTime(adminLoginLog.getCreateTime());
+            adminMapper.updateByPrimaryKeySelective(updateAdmin);
+        }
     }
 
     /**
@@ -159,5 +193,27 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     @Override
     public List<UmsAdmin> listAll() {
         return adminMapper.listByQueryBO(new UmsAdminQueryBO(null, null, null));
+    }
+
+    /**
+     * 修改指定用户信息
+     */
+    @Override
+    public int updateAdmin(Long id, UmsAdmin admin) {
+        admin.setId(id);
+        UmsAdmin rawAdmin = adminMapper.selectByPrimaryKey(id);
+        if (rawAdmin.getPassword().equals(admin.getPassword())){
+            admin.setPassword(null);
+        }else {
+            if (StringUtils.isEmpty(admin.getPassword())){
+                Asserts.fail(ResultCodeEnum.PASSWORD_NOT_ALLOWED_NULL);
+            }
+            //将密码进行加密操作
+            String encodePassword = passwordEncoder.encode(admin.getPassword());
+            admin.setPassword(encodePassword);
+        }
+        int count = adminMapper.updateByPrimaryKeySelective(admin);
+        adminCacheService.delAdmin(admin.getId());
+        return count;
     }
 }

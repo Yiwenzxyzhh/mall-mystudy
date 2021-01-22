@@ -23,6 +23,8 @@ public enum ResultCodeEnum implements IErrorCode {
     REGISTER_SUCCESS(1005, "注册成功"),
     VERIFY_CODE_INCORRECT(1006,"验证码错误"),
     USER_ALREADY_EXIST(1007,"用户已经存在"),
+    PASSWORD_NOT_ALLOWED_NULL(1008,"密码不能为空"),
+    USER_NOT_EXIST(1009,"用户不存在"),
 
     //order
     ORDER_SUCCESS(2000,"下单成功"),

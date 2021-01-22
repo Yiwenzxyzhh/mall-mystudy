@@ -96,6 +96,13 @@ public class UmsAdminController {
         return CommonResult.success(data);
     }
 
+    @ApiOperation(value = "登出功能")
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult logout() {
+        return CommonResult.success();
+    }
+
     @ApiOperation("根据用户名或姓名分页获取用户列表")
     @GetMapping("/list")
     public CommonResult listUmsAdmin(@RequestParam(value = "keyword", required = false) String keyword,
@@ -103,6 +110,16 @@ public class UmsAdminController {
                                      @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum){
         List<UmsAdmin> adminList = adminService.listAdmin(keyword, pageNum, pageSize);
         return CommonResult.success(CommonPage.restPage(adminList));
+    }
+
+    @ApiOperation("修改指定用户信息")
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
+    public CommonResult update(@PathVariable Long id, @RequestBody UmsAdmin admin) {
+        int count = adminService.updateAdmin(id, admin);
+        if (count > 0) {
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed(ResultCodeEnum.FAILED);
     }
 
     @ApiOperation("获取用户所有权限（包括+-权限）")
