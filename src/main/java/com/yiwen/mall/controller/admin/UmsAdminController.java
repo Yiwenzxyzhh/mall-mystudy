@@ -105,6 +105,16 @@ public class UmsAdminController {
         return CommonResult.success(CommonPage.restPage(adminList));
     }
 
+    @ApiOperation("修改指定用户信息")
+    @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
+    public CommonResult update(@PathVariable Long id, @RequestBody UmsAdmin admin) {
+        int count = adminService.updateAdmin(id, admin);
+        if (count > 0) {
+            return CommonResult.success(count);
+        }
+        return CommonResult.failed(ResultCodeEnum.FAILED);
+    }
+
     @ApiOperation("获取用户所有权限（包括+-权限）")
     @GetMapping(value = "/permission/{adminId}")
     public CommonResult getPermissionList(@PathVariable Long adminId) {
