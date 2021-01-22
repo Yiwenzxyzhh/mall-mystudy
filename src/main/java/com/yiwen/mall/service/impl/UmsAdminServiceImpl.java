@@ -4,9 +4,12 @@ import com.github.pagehelper.PageHelper;
 import com.yiwen.mall.common.exception.Asserts;
 import com.yiwen.mall.common.api.ResultCodeEnum;
 import com.yiwen.mall.common.utils.JwtTokenUtil;
+import com.yiwen.mall.common.utils.RequestUtil;
 import com.yiwen.mall.dao.custom.UmsAdminRoleRelationDao;
+import com.yiwen.mall.dao.mapper.UmsAdminLoginLogMapper;
 import com.yiwen.mall.dao.mapper.UmsAdminMapper;
 import com.yiwen.mall.dao.model.UmsAdmin;
+import com.yiwen.mall.dao.model.UmsAdminLoginLog;
 import com.yiwen.mall.dao.model.UmsPermission;
 import com.yiwen.mall.dao.model.UmsRole;
 import com.yiwen.mall.dto.AdminUserDetails;
@@ -28,7 +31,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
 
@@ -52,6 +58,8 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     private UmsAdminMapper adminMapper;
     @Autowired
     private UmsAdminRoleRelationDao adminRoleRelationDao;
+    @Autowired
+    private UmsAdminLoginLogMapper loginLogMapper;
     //专门用来操作Redis缓存的业务类
     @Autowired
     private UmsAdminCacheService adminCacheService;
@@ -102,10 +110,29 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             token = jwtTokenUtil.generateTokenByUserDetails(userDetails);
+            insertLoginLog(username);
         } catch (AuthenticationException e) {
             LOGGER.warn("登录异常:{}", e.getMessage());
         }
         return token;
+    }
+
+    /**
+     * 添加登录记录
+     * @param username 用户名
+     */
+    private void insertLoginLog(String username) {
+        UmsAdmin admin = getAdminByUsername(username);
+        if (admin == null){
+            Asserts.fail(ResultCodeEnum.USER_NOT_EXIST);
+        }
+        UmsAdminLoginLog adminLoginLog = new UmsAdminLoginLog();
+        adminLoginLog.setAdminId(admin.getId());
+        adminLoginLog.setCreateTime(new Date());
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+        adminLoginLog.setIp(RequestUtil.getRequestIp(request));
+        loginLogMapper.insertSelective(adminLoginLog);
     }
 
     /**
