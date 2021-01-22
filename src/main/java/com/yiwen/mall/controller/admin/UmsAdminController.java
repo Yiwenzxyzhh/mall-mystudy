@@ -96,6 +96,13 @@ public class UmsAdminController {
         return CommonResult.success(data);
     }
 
+    @ApiOperation(value = "登出功能")
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult logout() {
+        return CommonResult.success();
+    }
+
     @ApiOperation("根据用户名或姓名分页获取用户列表")
     @GetMapping("/list")
     public CommonResult listUmsAdmin(@RequestParam(value = "keyword", required = false) String keyword,
