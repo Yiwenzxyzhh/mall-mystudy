@@ -114,9 +114,33 @@
       sort = #{sort,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="list" resultMap="BaseResultMap">
+
+  <select id="listByQueryBO" parameterType="com.yiwen.mall.pubdef.bo.UmsRoleQueryBO" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from ums_role
+    <choose>
+      <when test="likeFindFlag == true">
+        <where>
+          <if test="status != null">
+            and status = #{status}
+          </if>
+          <if test="name != null">
+            and `name` like #{name}
+          </if>
+        </where>
+      </when>
+      <otherwise>
+        <where>
+          <if test="status != null">
+            and status = #{status}
+          </if>
+          <if test="name != null">
+            and `name` = #{name}
+          </if>
+        </where>
+      </otherwise>
+    </choose>
+    order by create_time DESC
   </select>
 </mapper>

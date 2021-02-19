@@ -1,6 +1,7 @@
 package com.yiwen.mall.dao.mapper;
 
 import com.yiwen.mall.dao.model.UmsRole;
+import com.yiwen.mall.pubdef.bo.UmsRoleQueryBO;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface UmsRoleMapper {
 
     int updateByPrimaryKey(UmsRole record);
 
-    List<UmsRole> list();
+    List<UmsRole> listByQueryBO(UmsRoleQueryBO queryBO);
 }
