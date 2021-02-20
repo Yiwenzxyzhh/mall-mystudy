@@ -113,7 +113,7 @@ public class UmsAdminController {
     }
 
     @ApiOperation("获取指定用户信息")
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/role/{id}", method = RequestMethod.GET)
     public CommonResult<UmsAdmin> getItem(@PathVariable Long id) {
         UmsAdmin admin = adminService.getAdminById(id);
         return CommonResult.success(admin);
