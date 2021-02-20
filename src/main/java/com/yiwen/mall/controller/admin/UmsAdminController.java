@@ -140,7 +140,7 @@ public class UmsAdminController {
     @RequestMapping(value = "/role/{adminId}", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult getRoleList(@PathVariable Long adminId) {
-        return CommonResult.success(ImmutableMap.of("role_list", adminService.getRoleListByAdminId(adminId)));
+        return CommonResult.success(adminService.getRoleListByAdminId(adminId));
     }
 
     @ApiOperation("给用户分配角色")
@@ -148,6 +148,6 @@ public class UmsAdminController {
     @ResponseBody
     public CommonResult updateRole(@RequestParam("adminId") Long adminId,
                                    @RequestParam("roleIds") List<Long> roleIds) {
-        return CommonResult.success(ImmutableMap.of("count", adminService.updateRoleByAdminId(adminId, roleIds)));
+        return CommonResult.success(adminService.updateRoleByAdminId(adminId, roleIds));
     }
 }
