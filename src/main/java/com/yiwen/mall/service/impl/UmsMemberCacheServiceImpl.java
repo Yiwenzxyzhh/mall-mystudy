@@ -36,7 +36,7 @@ public class UmsMemberCacheServiceImpl implements UmsMemberCacheService {
     @Override
     public String getAuthCode(String telephone) {
         String key = REDIS_KEY_PREFIX_AUTH_CODE + telephone;
-        return redisService.get(key);
+        return (String) redisService.get(key);
     }
 
 }

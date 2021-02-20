@@ -42,11 +42,6 @@ public interface UmsAdminService {
     List<UmsPermission> getPermissionList(Long adminId);
 
     /**
-     * 获取用户对于角色
-     */
-    List<UmsRole> getRoleList(Long adminId);
-
-    /**
      * 获取用户信息
      */
     UserDetails loadUserByUsername(String username);
@@ -59,7 +54,22 @@ public interface UmsAdminService {
     List<UmsAdmin> listAll();
 
     /**
+     * 根据用户id获取用户
+     */
+    UmsAdmin getAdminById(Long id);
+
+    /**
      * 修改指定用户信息
      */
     int updateAdmin(Long id, UmsAdmin admin);
+
+    /**
+     * 获取用户对于角色
+     */
+    List<UmsRole> getRoleListByAdminId(Long adminId);
+
+    /**
+     * 修改用户角色关系
+     */
+    int updateRoleByAdminId(Long adminId, List<Long> roleIds);
 }

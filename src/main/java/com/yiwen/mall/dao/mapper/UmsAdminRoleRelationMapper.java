@@ -1,7 +1,9 @@
 package com.yiwen.mall.dao.mapper;
 
 import com.yiwen.mall.dao.model.UmsAdminRoleRelation;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface UmsAdminRoleRelationMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -14,4 +16,6 @@ public interface UmsAdminRoleRelationMapper {
     int updateByPrimaryKeySelective(UmsAdminRoleRelation record);
 
     int updateByPrimaryKey(UmsAdminRoleRelation record);
+
+    int deleteByAdminId(Long adminId);
 }

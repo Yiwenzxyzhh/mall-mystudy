@@ -1,12 +1,15 @@
 package com.yiwen.mall.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.yiwen.mall.dao.custom.UmsRoleDao;
 import com.yiwen.mall.dao.mapper.UmsRoleMapper;
 import com.yiwen.mall.dao.model.UmsMenu;
 import com.yiwen.mall.dao.model.UmsRole;
+import com.yiwen.mall.pubdef.bo.UmsRoleQueryBO;
 import com.yiwen.mall.service.UmsRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -35,7 +38,19 @@ public class UmsRoleServiceImpl implements UmsRoleService {
      * 获取所有角色列表
      */
     @Override
-    public List<UmsRole> list() {
-        return roleMapper.list();
+    public List<UmsRole> listAll() {
+        return roleMapper.listByQueryBO(new UmsRoleQueryBO(null, null, false));
+    }
+
+    /**
+     * 分页获取角色列表
+     */
+    @Override
+    public List<UmsRole> listByPage(String roleName, Integer pageSize, Integer pageNum) {
+        PageHelper.startPage(pageNum, pageSize);
+        if (StringUtils.isEmpty(roleName)){
+            return listAll();
+        }
+        return roleMapper.listByQueryBO(new UmsRoleQueryBO("%" + roleName + "%", null, true));
     }
 }

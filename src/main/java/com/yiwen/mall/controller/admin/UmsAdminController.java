@@ -84,7 +84,7 @@ public class UmsAdminController {
         }
         String username = principal.getName();
         UmsAdmin umsAdmin = adminService.getAdminByUsername(username);
-        List<UmsRole> roleList = adminService.getRoleList(umsAdmin.getId());
+        List<UmsRole> roleList = adminService.getRoleListByAdminId(umsAdmin.getId());
         Map<String, Object> data = new HashMap<>();
         data.put("username", umsAdmin.getUsername());
         data.put("icon", umsAdmin.getIcon());
@@ -112,6 +112,13 @@ public class UmsAdminController {
         return CommonResult.success(CommonPage.restPage(adminList));
     }
 
+    @ApiOperation("获取指定用户信息")
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public CommonResult<UmsAdmin> getItem(@PathVariable Long id) {
+        UmsAdmin admin = adminService.getAdminById(id);
+        return CommonResult.success(admin);
+    }
+
     @ApiOperation("修改指定用户信息")
     @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
     public CommonResult update(@PathVariable Long id, @RequestBody UmsAdmin admin) {
@@ -127,5 +134,20 @@ public class UmsAdminController {
     public CommonResult getPermissionList(@PathVariable Long adminId) {
         List<UmsPermission> permissionList = adminService.getPermissionList(adminId);
         return CommonResult.success(permissionList);
+    }
+
+    @ApiOperation("获取指定用户的角色")
+    @RequestMapping(value = "/role/{adminId}", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult getRoleList(@PathVariable Long adminId) {
+        return CommonResult.success(adminService.getRoleListByAdminId(adminId));
+    }
+
+    @ApiOperation("给用户分配角色")
+    @RequestMapping(value = "/role/update", method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult updateRole(@RequestParam("adminId") Long adminId,
+                                   @RequestParam("roleIds") List<Long> roleIds) {
+        return CommonResult.success(adminService.updateRoleByAdminId(adminId, roleIds));
     }
 }

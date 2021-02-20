@@ -8,10 +8,8 @@ import com.yiwen.mall.common.utils.RequestUtil;
 import com.yiwen.mall.dao.custom.UmsAdminRoleRelationDao;
 import com.yiwen.mall.dao.mapper.UmsAdminLoginLogMapper;
 import com.yiwen.mall.dao.mapper.UmsAdminMapper;
-import com.yiwen.mall.dao.model.UmsAdmin;
-import com.yiwen.mall.dao.model.UmsAdminLoginLog;
-import com.yiwen.mall.dao.model.UmsPermission;
-import com.yiwen.mall.dao.model.UmsRole;
+import com.yiwen.mall.dao.mapper.UmsAdminRoleRelationMapper;
+import com.yiwen.mall.dao.model.*;
 import com.yiwen.mall.dto.AdminUserDetails;
 import com.yiwen.mall.pubdef.bo.UmsAdminQueryBO;
 import com.yiwen.mall.pubdef.pubenum.UmsAdminStatusEnum;
@@ -30,11 +28,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -63,6 +64,8 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     //专门用来操作Redis缓存的业务类
     @Autowired
     private UmsAdminCacheService adminCacheService;
+    @Autowired
+    private UmsAdminRoleRelationMapper umsAdminRoleRelationMapper;
 
     @Override
     public UmsAdmin getAdminByUsername(String username) {
@@ -155,14 +158,6 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     }
 
     /**
-     * 获取用户对于角色
-     */
-    @Override
-    public List<UmsRole> getRoleList(Long adminId) {
-        return adminRoleRelationDao.getRoleList(adminId);
-    }
-
-    /**
      * 获取用户信息
      */
     @Override
@@ -196,6 +191,20 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     }
 
     /**
+     * 根据用户id获取用户
+     *
+     * @param id
+     */
+    @Override
+    public UmsAdmin getAdminById(Long id) {
+        UmsAdmin admin = adminMapper.selectByPrimaryKey(id);
+        if (admin == null){
+            Asserts.fail(ResultCodeEnum.USER_NOT_EXIST);
+        }
+        return admin;
+    }
+
+    /**
      * 修改指定用户信息
      */
     @Override
@@ -214,6 +223,43 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         }
         int count = adminMapper.updateByPrimaryKeySelective(admin);
         adminCacheService.delAdmin(admin.getId());
+        return count;
+    }
+
+    /**
+     * 获取用户对于角色
+     */
+    @Override
+    public List<UmsRole> getRoleListByAdminId(Long adminId) {
+        return adminRoleRelationDao.getRoleListByAdminId(adminId);
+    }
+
+    /**
+     * 修改用户角色关系
+     */
+    @Transactional
+    @Override
+    public int updateRoleByAdminId(Long adminId, List<Long> roleIds) {
+        //校验参数
+        if (adminId == null || CollectionUtils.isEmpty(roleIds)){
+            Asserts.fail(ResultCodeEnum.VALIDATE_FAILED);
+        }
+        //删除原来的角色关系
+        umsAdminRoleRelationMapper.deleteByAdminId(adminId);
+        //建立新关系
+        List<UmsAdminRoleRelation> list = new ArrayList<>();
+        for (Long roleId: roleIds){
+            UmsAdminRoleRelation adminRoleRelation = new UmsAdminRoleRelation();
+            adminRoleRelation.setAdminId(adminId);
+            adminRoleRelation.setRoleId(roleId);
+            list.add(adminRoleRelation);
+        }
+        int count = adminRoleRelationDao.insertList(list);
+        if (count < 0){
+            Asserts.fail(ResultCodeEnum.FAILED);
+        }
+        //删缓存
+        adminCacheService.delResourceList(adminId);
         return count;
     }
 }
