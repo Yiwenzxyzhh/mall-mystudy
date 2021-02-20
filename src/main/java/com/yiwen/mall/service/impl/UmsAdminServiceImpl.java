@@ -196,6 +196,20 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     }
 
     /**
+     * 根据用户id获取用户
+     *
+     * @param id
+     */
+    @Override
+    public UmsAdmin getAdminById(Long id) {
+        UmsAdmin admin = adminMapper.selectByPrimaryKey(id);
+        if (admin == null){
+            Asserts.fail(ResultCodeEnum.USER_NOT_EXIST);
+        }
+        return admin;
+    }
+
+    /**
      * 修改指定用户信息
      */
     @Override

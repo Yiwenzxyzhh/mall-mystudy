@@ -59,6 +59,11 @@ public interface UmsAdminService {
     List<UmsAdmin> listAll();
 
     /**
+     * 根据用户id获取用户
+     */
+    UmsAdmin getAdminById(Long id);
+
+    /**
      * 修改指定用户信息
      */
     int updateAdmin(Long id, UmsAdmin admin);

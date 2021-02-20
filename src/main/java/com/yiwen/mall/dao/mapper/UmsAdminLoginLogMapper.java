@@ -1,7 +1,9 @@
 package com.yiwen.mall.dao.mapper;
 
 import com.yiwen.mall.dao.model.UmsAdminLoginLog;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface UmsAdminLoginLogMapper {
     int deleteByPrimaryKey(Long id);
 
