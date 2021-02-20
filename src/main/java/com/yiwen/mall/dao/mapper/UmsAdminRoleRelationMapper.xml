@@ -10,7 +10,7 @@
     id, admin_id, role_id
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from ums_admin_role_relation
     where id = #{id,jdbcType=BIGINT}
@@ -66,4 +66,9 @@
       role_id = #{roleId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <delete id="deleteByAdminId" parameterType="java.lang.Long">
+    delete from ums_admin_role_relation
+    where admin_id = #{adminId,jdbcType=BIGINT}
+  </delete>
 </mapper>

@@ -15,7 +15,7 @@ public interface RedisService {
     /**
      * 获取数据
      */
-    String get(String key);
+    Object get(String key);
 
     /**
      * 设置超期时间
@@ -32,4 +32,9 @@ public interface RedisService {
      * @param delta 自增步长
      */
     Long increment(String key, long delta);
+
+    /**
+     * 删除属性
+     */
+    Boolean del(String key);
 }

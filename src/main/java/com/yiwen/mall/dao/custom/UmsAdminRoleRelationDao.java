@@ -1,5 +1,6 @@
 package com.yiwen.mall.dao.custom;
 
+import com.yiwen.mall.dao.model.UmsAdminRoleRelation;
 import com.yiwen.mall.dao.model.UmsPermission;
 import com.yiwen.mall.dao.model.UmsRole;
 import org.springframework.data.repository.query.Param;
@@ -23,6 +24,12 @@ public interface UmsAdminRoleRelationDao {
     /**
      * 获取用于所有角色
      */
-    List<UmsRole> getRoleList(@Param("adminId") Long adminId);
+    List<UmsRole> getRoleListByAdminId(@Param("adminId") Long adminId);
+
+    /**
+     * 批量插入用户角色关系
+     */
+    int insertList(@Param("list") List<UmsAdminRoleRelation> adminRoleRelationList);
+
 
 }

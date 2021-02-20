@@ -2,8 +2,7 @@ package com.yiwen.mall.service.impl;
 
 import com.yiwen.mall.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Service;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.concurrent.TimeUnit;
 
@@ -12,11 +11,10 @@ import java.util.concurrent.TimeUnit;
  * @date 2020/10/13 13:45
  * @describe redis操作Service的实现类
  */
-@Service
 public class RedisServiceImpl implements RedisService {
 
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 存储数据
@@ -26,7 +24,7 @@ public class RedisServiceImpl implements RedisService {
      */
     @Override
     public void set(String key, String value) {
-        stringRedisTemplate.opsForValue().set(key, value);
+        redisTemplate.opsForValue().set(key, value);
     }
 
     /**
@@ -35,8 +33,8 @@ public class RedisServiceImpl implements RedisService {
      * @param key
      */
     @Override
-    public String get(String key) {
-        return stringRedisTemplate.opsForValue().get(key);
+    public Object get(String key) {
+        return redisTemplate.opsForValue().get(key);
     }
 
     /**
@@ -47,7 +45,7 @@ public class RedisServiceImpl implements RedisService {
      */
     @Override
     public boolean expire(String key, long expire) {
-        return stringRedisTemplate.expire(key, expire, TimeUnit.SECONDS);
+        return redisTemplate.expire(key, expire, TimeUnit.SECONDS);
     }
 
     /**
@@ -57,7 +55,7 @@ public class RedisServiceImpl implements RedisService {
      */
     @Override
     public void remove(String key) {
-        stringRedisTemplate.delete(key);
+        redisTemplate.delete(key);
     }
 
     /**
@@ -68,6 +66,14 @@ public class RedisServiceImpl implements RedisService {
      */
     @Override
     public Long increment(String key, long delta) {
-        return stringRedisTemplate.opsForValue().increment(key, delta);
+        return redisTemplate.opsForValue().increment(key, delta);
+    }
+
+    /**
+     * 删除属性
+     */
+    @Override
+    public Boolean del(String key) {
+        return redisTemplate.delete(key);
     }
 }
