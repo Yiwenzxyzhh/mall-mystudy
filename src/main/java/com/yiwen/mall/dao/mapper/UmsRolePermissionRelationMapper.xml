@@ -10,7 +10,7 @@
     id, role_id, permission_id
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from ums_role_permission_relation
     where id = #{id,jdbcType=BIGINT}

@@ -13,7 +13,7 @@ public enum ResultCodeEnum implements IErrorCode {
     UNAUTHORIZED(401, "暂未登录或token已经过期"),
     FORBIDDEN(403, "没有相关权限"),
 
-    //ums
+    //ums_admin
     USER_NAME_DUPLICATED(1000, "该昵称已被占用"),
     VERIFY_CODE_NULL(1001,"请输入验证码"),
     VERIFY_CODE_FAILED(1002,"验证码校验失败"),
@@ -29,8 +29,8 @@ public enum ResultCodeEnum implements IErrorCode {
     //order
     ORDER_SUCCESS(2000,"下单成功"),
 
-    //admin
-
+    //ums_role
+    ROLE_NOT_EXIST(3000, "不存在该角色"),
 
     ;
 

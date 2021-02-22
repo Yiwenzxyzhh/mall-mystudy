@@ -15,6 +15,7 @@ import com.yiwen.mall.pubdef.bo.UmsAdminQueryBO;
 import com.yiwen.mall.pubdef.pubenum.UmsAdminStatusEnum;
 import com.yiwen.mall.service.UmsAdminCacheService;
 import com.yiwen.mall.service.UmsAdminService;
+import com.yiwen.mall.service.UmsRoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -66,6 +67,8 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     private UmsAdminCacheService adminCacheService;
     @Autowired
     private UmsAdminRoleRelationMapper umsAdminRoleRelationMapper;
+    @Autowired
+    private UmsRoleService roleService;
 
     @Override
     public UmsAdmin getAdminByUsername(String username) {
@@ -209,11 +212,19 @@ public class UmsAdminServiceImpl implements UmsAdminService {
      */
     @Override
     public int updateAdmin(Long id, UmsAdmin admin) {
+        if (id == null || admin == null){
+            Asserts.fail(ResultCodeEnum.VALIDATE_FAILED);
+        }
         admin.setId(id);
         UmsAdmin rawAdmin = adminMapper.selectByPrimaryKey(id);
+        if (rawAdmin == null){
+            Asserts.fail(ResultCodeEnum.USER_NOT_EXIST);
+        }
         if (rawAdmin.getPassword().equals(admin.getPassword())){
+            //与原加密密码相同的不需要修改
             admin.setPassword(null);
         }else {
+            //与原加密密码不同的需要加密修改
             if (StringUtils.isEmpty(admin.getPassword())){
                 Asserts.fail(ResultCodeEnum.PASSWORD_NOT_ALLOWED_NULL);
             }
@@ -222,6 +233,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
             admin.setPassword(encodePassword);
         }
         int count = adminMapper.updateByPrimaryKeySelective(admin);
+        if (count < 0){
+            Asserts.fail(ResultCodeEnum.FAILED);
+        }
         adminCacheService.delAdmin(admin.getId());
         return count;
     }
@@ -258,6 +272,8 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         if (count < 0){
             Asserts.fail(ResultCodeEnum.FAILED);
         }
+        //更新角色用户数
+        roleService.updateRoleAdminCount(roleIds);
         //删缓存
         adminCacheService.delResourceList(adminId);
         return count;

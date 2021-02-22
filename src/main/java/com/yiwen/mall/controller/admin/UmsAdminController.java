@@ -122,11 +122,15 @@ public class UmsAdminController {
     @ApiOperation("修改指定用户信息")
     @RequestMapping(value = "/update/{id}", method = RequestMethod.POST)
     public CommonResult update(@PathVariable Long id, @RequestBody UmsAdmin admin) {
-        int count = adminService.updateAdmin(id, admin);
-        if (count > 0) {
-            return CommonResult.success(count);
-        }
-        return CommonResult.failed(ResultCodeEnum.FAILED);
+        return CommonResult.success(adminService.updateAdmin(id, admin));
+    }
+
+    @ApiOperation("修改帐号状态")
+    @RequestMapping(value = "/updateStatus/{id}", method = RequestMethod.POST)
+    public CommonResult updateStatus(@PathVariable Long id, @RequestParam(value = "status") Integer status) {
+        UmsAdmin umsAdmin = new UmsAdmin();
+        umsAdmin.setStatus(status);
+        return CommonResult.success(adminService.updateAdmin(id, umsAdmin));
     }
 
     @ApiOperation("获取用户所有权限（包括+-权限）")
