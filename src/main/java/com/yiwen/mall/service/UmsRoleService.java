@@ -26,4 +26,9 @@ public interface UmsRoleService {
      * 分页获取角色列表
      */
     List<UmsRole> listByPage(String keyword, Integer pageSize, Integer pageNum);
+
+    /**
+     * 根据roleId更新角色用户数
+     */
+    void updateRoleAdminCount(List<Long> roleIds);
 }

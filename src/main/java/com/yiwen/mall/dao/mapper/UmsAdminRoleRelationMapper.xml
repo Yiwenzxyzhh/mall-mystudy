@@ -71,4 +71,9 @@
     delete from ums_admin_role_relation
     where admin_id = #{adminId,jdbcType=BIGINT}
   </delete>
+
+  <select id="countAdminByRoleId" parameterType="java.lang.Long" resultType="java.lang.Integer">
+    select count(admin_id) from ums_admin_role_relation
+    where role_id = #{roleId,jdbcType=BIGINT}
+  </select>
 </mapper>

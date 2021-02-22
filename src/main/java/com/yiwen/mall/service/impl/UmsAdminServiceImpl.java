@@ -15,6 +15,7 @@ import com.yiwen.mall.pubdef.bo.UmsAdminQueryBO;
 import com.yiwen.mall.pubdef.pubenum.UmsAdminStatusEnum;
 import com.yiwen.mall.service.UmsAdminCacheService;
 import com.yiwen.mall.service.UmsAdminService;
+import com.yiwen.mall.service.UmsRoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -66,6 +67,8 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     private UmsAdminCacheService adminCacheService;
     @Autowired
     private UmsAdminRoleRelationMapper umsAdminRoleRelationMapper;
+    @Autowired
+    private UmsRoleService roleService;
 
     @Override
     public UmsAdmin getAdminByUsername(String username) {
@@ -258,6 +261,8 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         if (count < 0){
             Asserts.fail(ResultCodeEnum.FAILED);
         }
+        //更新角色用户数
+        roleService.updateRoleAdminCount(roleIds);
         //删缓存
         adminCacheService.delResourceList(adminId);
         return count;
