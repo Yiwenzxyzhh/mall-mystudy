@@ -17,13 +17,18 @@ public class RedisServiceImpl implements RedisService {
     private RedisTemplate<String, Object> redisTemplate;
 
     /**
-     * 存储数据
-     *
-     * @param key
-     * @param value
+     * 保存属性
      */
     @Override
-    public void set(String key, String value) {
+    public void set(String key, Object value, long expireTime) {
+        redisTemplate.opsForValue().set(key, value, expireTime, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 存储数据
+     */
+    @Override
+    public void set(String key, Object value) {
         redisTemplate.opsForValue().set(key, value);
     }
 

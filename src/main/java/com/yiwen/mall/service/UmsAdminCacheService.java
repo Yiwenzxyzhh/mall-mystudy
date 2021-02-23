@@ -11,7 +11,15 @@ import java.util.List;
  */
 public interface UmsAdminCacheService {
 
+    /**
+     * 获取缓存后台用户信息
+     */
     UmsAdmin getAdminByUsername(String username);
+
+    /**
+     * 设置缓存后台用户信息
+     */
+    void setAdmin(UmsAdmin admin);
 
     /**
      * 删除后台用户缓存

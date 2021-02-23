@@ -78,7 +78,9 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         }
         List<UmsAdmin> adminList = adminMapper.listByQueryBO(new UmsAdminQueryBO(null, username, false));
         if (adminList != null && adminList.size() > 0) {
-            return adminList.get(0);
+            admin = adminList.get(0);
+            adminCacheService.setAdmin(admin);
+            return admin;
         }
         return null;
     }
