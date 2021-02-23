@@ -4,6 +4,7 @@ import com.yiwen.mall.common.utils.JwtTokenUtil;
 import com.yiwen.mall.component.security.JwtAuthenticationTokenFilter;
 import com.yiwen.mall.component.security.RestAuthenticationEntryPoint;
 import com.yiwen.mall.component.security.RestfulAccessDeniedHandler;
+import com.yiwen.mall.component.security.config.IgnoreUrlsConfig;
 import com.yiwen.mall.service.UmsAdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

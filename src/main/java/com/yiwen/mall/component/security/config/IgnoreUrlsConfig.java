@@ -1,4 +1,4 @@
-package com.yiwen.mall.config;
+package com.yiwen.mall.component.security.config;
 
 import lombok.Getter;
 import lombok.Setter;
