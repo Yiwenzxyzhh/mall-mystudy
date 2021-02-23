@@ -23,38 +23,40 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
     private RedisService redisService;
     @Autowired
     private UmsAdminService adminService;
-    @Value("${redis.database}")
-    private String REDIS_DATABASE;
-//    @Value("${redis.expire.common}")
-//    private Long REDIS_EXPIRE;
-//    @Value("${redis.key.admin}")
-//    private String REDIS_KEY_ADMIN;
-//    @Value("${redis.key.resourceList}")
-//    private String REDIS_KEY_RESOURCE_LIST;
-    private final String redisDataBaseStr = REDIS_DATABASE + ":";
+//    @Value("${redis.database}")
+//    private String REDIS_DATABASE;
+    @Value("${redis.key.expire.common}")
+    private Long REDIS_EXPIRE;
 
+    /**
+     * 获取缓存后台用户信息
+     */
     @Override
     public UmsAdmin getAdminByUsername(String username) {
-        return null;
+        return (UmsAdmin) redisService.get(genRedisAdminKey(username));
+    }
+
+    /**
+     * 设置缓存后台用户信息
+     */
+    @Override
+    public void setAdmin(UmsAdmin admin) {
+        redisService.set(genRedisAdminKey(admin.getUsername()), admin, REDIS_EXPIRE);
     }
 
     /**
      * 删除后台用户缓存
-     *
-     * @param adminId
      */
     @Override
     public void delAdmin(Long adminId) {
         UmsAdmin admin = adminService.getAdminById(adminId);
         if (admin != null) {
-            String key = genRedisAdminKey(adminId);
-//            String key = REDIS_DATABASE + ":" + REDIS_KEY_ADMIN + ":" + admin.getUsername();
-            redisService.del(key);
+            redisService.del(genRedisAdminKey(admin.getUsername()));
         }
     }
 
-    private String genRedisAdminKey(Long adminId){
-        return String.format(redisDataBaseStr + RedisConstant.REDIS_KEY_ADMIN, adminId);
+    private String genRedisAdminKey(String username){
+        return String.format(RedisConstant.REDIS_KEY_ADMIN, username);
     }
 
     /**
@@ -64,13 +66,11 @@ public class UmsAdminCacheServiceImpl implements UmsAdminCacheService {
      */
     @Override
     public void delResourceList(Long adminId) {
-//        String key = REDIS_DATABASE + ":" + REDIS_KEY_RESOURCE_LIST + ":" + adminId;
-        String key = genRedisResourceListKey(adminId);
-        redisService.del(key);
+        redisService.del(genRedisResourceListKey(adminId));
     }
 
     private String genRedisResourceListKey(Long adminId){
-        return String.format(redisDataBaseStr + RedisConstant.REDIS_KEY_RESOURCE_LIST, adminId);
+        return String.format(RedisConstant.REDIS_KEY_RESOURCE_LIST, adminId);
     }
 
     /**
