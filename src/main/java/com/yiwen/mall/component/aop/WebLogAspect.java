@@ -54,7 +54,7 @@ import java.util.Map;
 public class WebLogAspect {
     private static final Logger LOGGER = LoggerFactory.getLogger(WebLogAspect.class);
 
-    @Pointcut("execution(public * com.yiwen.mall.controller.*.*(..))")
+    @Pointcut("execution(public * com.yiwen.mall.controller.*.*(..)) || execution(public * com.yiwen.mall.controller.admin.*.*(..))")
     public void webLog() {
     }
 
