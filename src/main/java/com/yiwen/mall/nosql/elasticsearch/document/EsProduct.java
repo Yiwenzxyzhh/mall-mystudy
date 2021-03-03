@@ -1,7 +1,7 @@
 package com.yiwen.mall.nosql.elasticsearch.document;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -20,9 +20,9 @@ import java.util.List;
  * @Id: 表示是文档的id，文档可以认为是mysql中表行的概念
  * @Field: 文档中字段的类型
  */
+@Data
+@EqualsAndHashCode(callSuper = false)
 @Document(indexName = "pms", type = "product",shards = 1,replicas = 0)
-@Getter
-@Setter
 public class EsProduct implements Serializable {
     private static final long serialVersionUID = -1L;
     @Id
@@ -49,6 +49,6 @@ public class EsProduct implements Serializable {
     private Integer stock;
     private Integer promotionType;
     private Integer sort;
-    @Field(type = FieldType.Nested)
+    @Field(type =FieldType.Nested)
     private List<EsProductAttributeValue> attrValueList;
 }

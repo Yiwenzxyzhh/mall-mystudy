@@ -1,7 +1,7 @@
 package com.yiwen.mall.nosql.elasticsearch.document;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
@@ -12,8 +12,8 @@ import java.io.Serializable;
  * @date 2021/1/11 16:49
  * @describe 搜索中的商品属性信息
  */
-@Getter
-@Setter
+@Data
+@EqualsAndHashCode(callSuper = false)
 public class EsProductAttributeValue implements Serializable {
     private static final long serialVersionUID = 1L;
     private Long id;

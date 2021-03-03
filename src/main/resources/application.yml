@@ -35,8 +35,11 @@ spring:
     elasticsearch:
       repositories:
         enabled: true
-      cluster-nodes: 127.0.0.1:9300 # es的连接地址及端口号
-      cluster-name: elasticsearch # es集群的名称
+#      cluster-nodes: 127.0.0.1:9300 # es的连接地址及端口号
+#      cluster-name: elasticsearch # es集群的名称
+  elasticsearch:
+    rest:
+      uris: localhost:9200
 
 mybatis:
   mapper-locations:
@@ -81,6 +84,7 @@ secure:
       - /admin/login
       - /admin/register
       - /brand/**
+      - /esProduct/**
 
 logging:
   level:
